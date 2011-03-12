@@ -19,7 +19,7 @@ int screen_height = 480;
 int screen_bpp = 32;
 
 const char* LEVEL_FILE_NAME = "level1.txt";
-
+const char* BACKGROUND_IMAGE_FILE_NAME = "gfx/background.png";
 GLuint background;
 
 KeyStates::KeyStates() {
@@ -158,7 +158,7 @@ void run() {
 int main() {
   initSDL();
   initGL();
-  background = loadTexture("background.png");
+  background = loadTexture(BACKGROUND_IMAGE_FILE_NAME);
   run();
   SDL_Quit();
   return 0;
