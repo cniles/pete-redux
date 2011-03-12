@@ -12,9 +12,28 @@ Clip::Clip(int frame_count, int frame_duration)
 Animation::Animation() {
 }
 
+/*void printSurfaceFlags(SDL_Surface* surface) {
+  const char* yes = "YES";
+  const char* no = "NO";
+  const char* srcalpha_on = (surface->flags & SDL_SRCALPHA)? yes : no;
+  const char* amask_defined = (surface->format->Amask != 0)? yes : no;
+  const char* srccolorkey_on = (surface->flags & SDL_SRCCOLORKEY)? yes : no;
+  int bpp = surface->format->BitsPerPixel;
+  std::cerr << "SDL_SRCALPHA: " << srcalpha_on << ", Amask def: " << amask_defined << ", SDL_SRCCOLORKEY: " << srccolorkey_on << ", BPP: " << bpp << std::endl;
+  }*/
+
 void Animation::parseClip(int index, Clip& clip, SDL_Surface* source) {
   SDL_Surface* sub_image = SDL_CreateRGBSurface(0, frame_size, frame_size, 32, RMASK, GMASK, BMASK, AMASK);
   int x = index * frame_size;
+
+  SDL_SetAlpha(source, 0, 0);
+  SDL_SetAlpha(sub_image, 0, 0);
+
+  /*std::cerr << "src--";
+  printSurfaceFlags(source);
+  std::cerr << "dst--";
+  printSurfaceFlags(sub_image);*/
+
   SDL_Rect src_rect = {x*frame_size, 0, frame_size, frame_size};
   SDL_Rect dst_rect = {0, 0, frame_size, frame_size };
   for(int i = 0; i < clip.frame_count; i++) {
