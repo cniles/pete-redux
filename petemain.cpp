@@ -18,6 +18,8 @@ int screen_width = 640;
 int screen_height = 480;
 int screen_bpp = 32;
 
+const char* LEVEL_FILE_NAME = "level1.txt";
+
 GLuint background;
 
 KeyStates::KeyStates() {
@@ -83,7 +85,8 @@ inline void drawBackground() {
 void draw(const GameState& gamestate) {  
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   glLoadIdentity();
-  
+
+  drawBackground();
 
   glPushMatrix();   
   glTranslatef(-gamestate.player->getX(), -gamestate.player->getY(), -10.0f);
@@ -94,6 +97,8 @@ void draw(const GameState& gamestate) {
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glAlphaFunc(GL_GREATER, 0.1f);
+  glEnable(GL_ALPHA_TEST);
 
   gamestate.player->draw(); 
   std::vector<GameObject*>::const_iterator object_iter = gamestate.objects.begin();
@@ -103,6 +108,7 @@ void draw(const GameState& gamestate) {
   }  
   glPopMatrix();
   glDisable(GL_BLEND);
+  glDisable(GL_ALPHA_TEST);
   SDL_GL_SwapBuffers();
 }
 
@@ -114,7 +120,7 @@ void run() {
   SDL_Event event;
   bool quit = false;
 
-  GameState gamestate(loadLevel("level1.txt"));
+  GameState gamestate(loadLevel(LEVEL_FILE_NAME));
 
   KeyStates key_states;
   

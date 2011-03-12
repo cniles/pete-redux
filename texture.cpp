@@ -16,7 +16,7 @@ void setDefaultTexParameter() {
 SDL_Surface* createConvertedSurface(SDL_Surface* original) {
   int w = original->w;
   int h = original->h;
-  SDL_Surface* result = SDL_CreateRGBSurface(0, w, h, BPP, RMASK, GMASK, BMASK, AMASK);
+  SDL_Surface* result = SDL_CreateRGBSurface(SDL_SRCALPHA, w, h, BPP, RMASK, GMASK, BMASK, AMASK);
   SDL_BlitSurface(original, NULL, result, NULL);
   return result;
 }
