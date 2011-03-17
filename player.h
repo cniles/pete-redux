@@ -3,7 +3,6 @@
 
 #include "keystates.h"
 #include "animation.h"
-#include "ctvec3.h"
 
 #include <BulletCollision/CollisionShapes/btConvex2dShape.h>
 #include "bullet.h"
