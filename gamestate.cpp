@@ -1,6 +1,9 @@
 #include "zombie.h"
 #include "gamestate.h"
 #include <iostream>
+
+#include <BulletCollision/CollisionShapes/btBox2dShape.h>
+
 GameState::GameState(Level level)
   : level(level) {
   initialize();
@@ -16,12 +19,20 @@ GameState::~GameState() {
     delete level_bodies[i];
     delete level_shapes[i];
   }
+  delete dynamics_world;
 }
 
 void GameState::initialize() {
+  std::cerr << "Initializing dynamics world...";
+  dynamics_world = createPhysicsWorld();
+  std::cerr << "Successfully created dynamics world." << std::endl;
+
+  std::cerr << "Initializing player...";
   GameObjectToken player_position = level.getObject(30);
   player = new Player(player_position.x, player_position.y, this);
-  
+  std::cerr << "Successfully initialzed player." << std::endl;
+
+  std::cerr << "Initializing game objects...";
   TokenList::const_iterator token_iter = level.getTokensStart();
   while(token_iter != level.getTokensEnd()) {
     switch(token_iter->id) {
@@ -31,7 +42,9 @@ void GameState::initialize() {
     }
     token_iter++;
   }
+  std::cerr << "Successfully initialized game objects." << std::endl;
 
+  std::cerr << "Initializing level physics...";
   for(int y = 0; y < 10; y++) {
     int x = 0;
     while(x < level.getLength()) {
@@ -43,7 +56,7 @@ void GameState::initialize() {
 	float width = stop_x - x;
 	float center_x = width/2.0f + x;
 	// Add a static rigid-body for each contiguous horizontal platform.
-	btCollisionShape* collision_shape = new btBoxShape(btVector3(width/2.0f,0.5f,0.5f));
+	btCollisionShape* collision_shape = new btBox2dShape(btVector3(width/2.0f,0.5f,0.5f));
 	btDefaultMotionState* motion_state = 
 	  new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(center_x, y+0.5f, 0)));
 	btScalar mass = 0;
@@ -51,7 +64,7 @@ void GameState::initialize() {
 	collision_shape->calculateLocalInertia(mass,inertia);
 	btRigidBody::btRigidBodyConstructionInfo rigid_body_ci(mass, motion_state, collision_shape, inertia);
 	btRigidBody* rigid_body = new btRigidBody(rigid_body_ci);
-	bullet.dynamics_world->addRigidBody(rigid_body);
+	dynamics_world->addRigidBody(rigid_body);
 	level_bodies.push_back(rigid_body);
 	level_shapes.push_back(collision_shape);
 	x = stop_x;
@@ -61,4 +74,5 @@ void GameState::initialize() {
       }
     }
   }
+  std::cerr << "Successfully initializinged level physics." << std::endl;
 }

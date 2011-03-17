@@ -32,7 +32,7 @@ void ZombieStateMoving::onUpdate(float dt) {
   btVector3 destination = ai->getDestination();
 
   current_position += velocity;
-  
+
   if(current_position.distance(destination) <= velocity.length()) {
     ai->getOwner()->setPosition(destination);
     ai->getOwner()->changeDirection();
@@ -58,7 +58,7 @@ void ZombieStateIdle::onUpdate(float dt) {
 }
 
 Zombie::Zombie(float x, float y, GameState* gamestate) 
-  : GameObject(x,y) , animation_timer(AnimationTimer(&animation)) {
+  : GameObject(x,y, gamestate) , animation_timer(AnimationTimer(&animation)) {
   if(animation.getClipCount()==0) {
     animation = Animation("gfx/zombie");
   }
@@ -70,8 +70,7 @@ Zombie::Zombie(float x, float y, GameState* gamestate)
 void Zombie::draw() {
   glPushMatrix();
   glTranslatef(position.getX(),position.getY(),-0.5f);
-  glTranslatef(0.5f, 0.0f, 0.0f);
-  glTranslatef(-0.5f, 0.0f, 0.0f);
+  glTranslatef(-0.5f, -0.5f, 0.0f);
   glBindTexture(GL_TEXTURE_2D, animation_timer.getFrame());
   if(direction==-1) {
     drawQuadFlip();

@@ -2,7 +2,7 @@ DIRFLAGS = -L$(HOME)/lib -I$(HOME)/include -I/usr/local/include/bullet
 CPPFLAGS=-g $(DIRFLAGS)
 CFLAGS=-g -std=c99
 TARGET=pete
-OBJS=petemain.o level.o tileset.o texture.o player.o animation.o ctvec3.o gamestate.o zombie.o gameobject.o platformai.o bulletwrap.o
+OBJS=petemain.o level.o tileset.o texture.o player.o animation.o ctvec3.o gamestate.o zombie.o gameobject.o platformai.o bullet.o
 LINK=g++ $(CPPFLAGS)
 #LINK=gcc $(CFLAGS)
 LFLAGS=-lSDL -lSDL_image -lGLU -lGL -lBulletDynamics -lBulletCollision -lLinearMath
