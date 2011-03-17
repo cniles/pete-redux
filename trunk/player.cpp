@@ -1,16 +1,20 @@
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include "gamestate.h"
 #include "player.h"
 #include "draw.h"
 
 Animation Player::animation = Animation();
 
+btCapsuleShape Player::child_collision_shape(0.25, 0.4);
+btConvex2dShape Player::collision_shape(&Player::child_collision_shape);
+
 void Player::calcIsOnGround() {
   on_ground = false;
-  int num_manifolds = gamestate->bullet.dispatcher->getNumManifolds();
+  btDispatcher* dispatcher = gamestate->dynamics_world->getDispatcher();
+  int num_manifolds = dispatcher->getNumManifolds();
   for(int i = 0; i < num_manifolds; i++) {
-    btPersistentManifold* contact_manifold = gamestate->bullet.dispatcher->getManifoldByIndexInternal(i);
+    btPersistentManifold* contact_manifold = dispatcher->getManifoldByIndexInternal(i);
     btCollisionObject* obj_a = static_cast<btCollisionObject*>(contact_manifold->getBody0());
     btCollisionObject* obj_b = static_cast<btCollisionObject*>(contact_manifold->getBody1());
     if(obj_a->getUserPointer() == (void*)this || obj_b->getUserPointer() == (void*)this) {
@@ -47,7 +51,7 @@ bool Player::isOnGround() {
   return on_ground;
 }
 
-Player::Player(int x, int y, GameState* gamestate) {
+Player::Player(int tile_x, int tile_y, GameState* gamestate) {
   if(animation.getClipCount() == 0) {
     animation = Animation("gfx/player");
   }
@@ -60,26 +64,24 @@ Player::Player(int x, int y, GameState* gamestate) {
   space_held = false;
   on_ground = false;
 
-  initial_position = btVector3(x+0.5f, y+0.5f, 0);
-  collision_shape = new btCapsuleShape(0.25, 0.4);
+  btVector3 initial_position(tile_x+0.5f, tile_y+0.5f, 0);
+
   btDefaultMotionState* motion_state = 
     new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),initial_position));
   btScalar mass = 0.8;
   btVector3 inertia(0,0,0);
-  collision_shape->calculateLocalInertia(mass,inertia);
-  btRigidBody::btRigidBodyConstructionInfo rigid_body_ci(mass, motion_state, collision_shape, inertia);
+  collision_shape.calculateLocalInertia(mass,inertia);
+  btRigidBody::btRigidBodyConstructionInfo rigid_body_ci(mass, motion_state, &collision_shape, inertia);
   rigid_body = new btRigidBody(rigid_body_ci);
   rigid_body->setAngularFactor(btScalar(0));
   rigid_body->setActivationState(DISABLE_DEACTIVATION);
   rigid_body->setUserPointer((void*)this);
-  gamestate->bullet.dynamics_world->addRigidBody(rigid_body);
+  gamestate->dynamics_world->addRigidBody(rigid_body);
 }
 
 Player::~Player() {
-  gamestate->bullet.dynamics_world->removeRigidBody(rigid_body);
   delete rigid_body->getMotionState();
   delete rigid_body;
-  delete collision_shape;
 }
 
 void Player::operator=(const Player& other) {
@@ -135,6 +137,10 @@ void Player::update(Uint32 dt, const KeyStates& key_states) {
   handleKeyStates(key_states);
   animation_timer.tick(dt);
   float dtf = float(dt)/1000.0f;
+  btTransform transform;
+  btVector3 origin;
+  rigid_body->getMotionState()->getWorldTransform(transform);
+  origin = transform.getOrigin();
 }
 
 float Player::getX() {

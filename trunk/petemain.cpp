@@ -7,7 +7,7 @@
 #include <SDL/SDL_opengl.h>
 #include <SDL/SDL_image.h>
 
-#include "bulletwrap.h"
+#include "bullet.h"
 #include "tileset.h"
 #include "keystates.h"
 #include "gamestate.h"
@@ -143,7 +143,7 @@ void run() {
 	}
       }
     }
-    gamestate.bullet.dynamics_world->stepSimulation(dtf,10);
+    gamestate.dynamics_world->stepSimulation(dtf,10);
     gamestate.player->update(elapsed, key_states);
     std::vector<GameObject*>::const_iterator object_iter = gamestate.objects.begin();
     while(object_iter != gamestate.objects.end()) {

@@ -5,7 +5,8 @@
 #include "animation.h"
 #include "ctvec3.h"
 
-#include "bulletwrap.h"
+#include <BulletCollision/CollisionShapes/btConvex2dShape.h>
+#include "bullet.h"
 
 #define PLAYER_TOP_X_SPEED 5.0f
 #define PLAYER_X_ACCELERATION 7.5f
@@ -13,9 +14,7 @@
 
 class GameState;
 class Player {
-  btCollisionShape* collision_shape;
   btRigidBody* rigid_body;
-  btVector3 initial_position;
 
   GameState* gamestate;
 
@@ -30,6 +29,9 @@ class Player {
   void handleKeyStates(const KeyStates&);
   void calcIsOnGround();
  public:
+  static btCapsuleShape child_collision_shape;
+  static btConvex2dShape collision_shape;
+
   Player(int x, int y, GameState*);
   ~Player();
   bool isOnGround();
