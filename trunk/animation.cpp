@@ -53,8 +53,14 @@ Animation::Animation(const char* fname) {
 void AnimationTimer::advanceFrame() {
   current_frame++;
   if(current_frame >= animation->getFrameCount(current_clip)) {
-    current_frame = 0;
-    current_clip = next_clip;
+    if(next_clip>=0) {
+      current_frame = 0;
+      current_clip = next_clip;
+    }
+    else {
+      stop();
+      current_frame--;
+    }
   }
 }
 
@@ -89,6 +95,10 @@ void AnimationTimer::setClip(int id) {
 void AnimationTimer::start() {
   timer = animation->getDuration(current_clip);
   status = PLAYING;
+}
+
+void AnimationTimer::stop() {
+  status = STOPPED;
 }
 
 AnimationTimer::AnimationTimer() 

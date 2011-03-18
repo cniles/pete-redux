@@ -15,8 +15,8 @@ struct GameState {
   std::vector<btCollisionShape*> level_shapes;
   GameState(Level level);
   ~GameState();
+  BulletCore* bullet_core;
   btDynamicsWorld* dynamics_world;
-  void initialize();
 };
 
 #endif

@@ -2,12 +2,19 @@
 #include "draw.h"
 #include <iostream>
 
-
 Animation Zombie::animation = Animation();
 
-ZombieStateMoving::ZombieStateMoving(PlatformAI* ai) 
-  : State(ai) {
+void ZombieStateDead::onEnter() {}
+void ZombieStateDead::onUpdate(float) {}
+void ZombieStateDead::onLeave() {}
+
+void ZombieStateDying::onEnter() {}
+void ZombieStateDying::onUpdate(float dt) {
+  if(ai->getOwner()->getAnimationState() == AnimationTimer::STOPPED) {
+    ai->changeState(new ZombieStateDead(ai));
+  }
 }
+void ZombieStateDying::onLeave() {}
 
 void ZombieStateMoving::onEnter() {
   btVector3 destination = ai->getFurthestFacingPointOnPlatform();
@@ -23,10 +30,7 @@ void ZombieStateMoving::onEnter() {
   }
   ai->setDestination(destination);    
 }
-
-void ZombieStateMoving::onLeave() {
-}
-
+void ZombieStateMoving::onLeave() {}
 void ZombieStateMoving::onUpdate(float dt) { 
   GameObject* owner = ai->getOwner();
 
@@ -46,27 +50,20 @@ void ZombieStateMoving::onUpdate(float dt) {
   body->applyCentralForce(force);
 }
 
-void ZombieStateIdle::onEnter() {
-}
-
-void ZombieStateIdle::onLeave() {
-}
-
-ZombieStateIdle::ZombieStateIdle(PlatformAI* ai) 
-  : State(ai) {
-}
-
-void ZombieStateIdle::onUpdate(float dt) {
-
-}
+void ZombieStateIdle::onEnter() {}
+void ZombieStateIdle::onUpdate(float dt) {}
+void ZombieStateIdle::onLeave() {}
 
 Zombie::Zombie(float x, float y, GameState* gamestate) 
-  : GameObject(x,y, gamestate, COL_ENEMY, COL_LEVEL | COL_PLAYER) , animation_timer(AnimationTimer(&animation)) {
+  : GameObject(x,y, gamestate, COL_ENEMY, COL_LEVEL | COL_PLAYER),
+    ai(PlatformAI(gamestate, this)), health(INITIAL_HEALTH) {
+  
   if(animation.getClipCount()==0) {
     animation = Animation("gfx/zombie");
   }
+
+  animation_timer = AnimationTimer(&animation);
   animation_timer.start();
-  ai = PlatformAI(gamestate, this);
   ai.changeState(new ZombieStateMoving(&ai));
 }
 
@@ -87,4 +84,15 @@ void Zombie::draw() {
 void Zombie::update(float dt) {
   ai.update(dt) ;
   animation_timer.tick(dt*1000);
+}
+
+void Zombie::takeDamage(int damage, int type) {
+  if(health > 0) {
+    health -= damage;
+    if(health <= 0) {
+      changeCollisionScheme(COL_ENEMY,COL_LEVEL);
+      animation_timer.playClipOnce(2, -1);
+      ai.changeState(new ZombieStateDying(&ai));
+    }
+  }
 }

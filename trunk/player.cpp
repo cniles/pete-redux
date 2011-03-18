@@ -47,25 +47,26 @@ void Player::calcIsOnGround() {
   }  
 }
 
-ShotgunCallback::ShotgunCallback(int direction)
-  : direction(direction) {
-}
+
+ShotgunCallback::ShotgunCallback(int direction) : direction(direction) {}
 
 btScalar ShotgunCallback::addSingleResult(btCollisionWorld::LocalRayResult& ray_result, bool normal_in_world_space) {
-  btVector3 source_vector(direction * 30.0f, 0.0f, 0.0f);
+  btVector3 source_vector(direction * 100.0f, 0.0f, 0.0f);
   btRigidBody* body = dynamic_cast<btRigidBody*>(ray_result.m_collisionObject);
+  void* ptr = body->getUserPointer();
+  DamageTaker* target = reinterpret_cast<DamageTaker*>(ptr);
+  if(target!=NULL) {
+    target->takeDamage(1,0);
+  }
   body->applyCentralForce(source_vector);
-  std::cerr << "A hit!" << std::endl;
   return btScalar(0.0f);
 }
 
 void Player::fireShotgun() {
-  std::cerr << "Boom!" << std::endl;
   animation_timer.playClipOnce(1, 0);
   btVector3 origin = position.getOrigin(); 
-  std::cerr << origin.getX() << ", " << origin.getY() << ", " << origin.getZ() << std::endl;
   for(int i = 0; i < 3; i++) {
-    btVector3 bullet_path(direction * 8.0, i*0.5f, 0.0f);
+    btVector3 bullet_path(direction * 5.0, i*0.5f, 0.0f);
     bullet_path += origin;
     ShotgunCallback callback(direction);
     gamestate->dynamics_world->rayTest(origin, bullet_path, callback);
@@ -91,6 +92,7 @@ Player::Player(int tile_x, int tile_y, GameState* gamestate) {
   on_ground = false;
   can_shoot = true;
   ctrl_released = true;
+
   position = btTransform(btQuaternion(0,0,0,1), btVector3(tile_x+0.5f, tile_y+0.5f, 0));
   direction = 1;
   btMotionState* motion_state = 
@@ -108,6 +110,7 @@ Player::Player(int tile_x, int tile_y, GameState* gamestate) {
 
 Player::~Player() {
   delete rigid_body->getMotionState();
+  gamestate->dynamics_world->removeRigidBody(rigid_body);
   delete rigid_body;
 }
 
@@ -219,4 +222,8 @@ void PlayerMotionState::getWorldTransform(btTransform& world_transform) const {
 void PlayerMotionState::setWorldTransform(const btTransform& world_transform) {
   position = world_transform;
   player->setPosition(position);
+}
+
+void Player::takeDamage(int,int) {
+  std::cerr << "Player takes damage" << std::endl;
 }
