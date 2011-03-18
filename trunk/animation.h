@@ -29,6 +29,7 @@ public:
 
 class AnimationTimer {
   Animation* animation;
+  int next_clip;
   int current_clip;
   int current_frame;
   int timer;
@@ -42,6 +43,7 @@ class AnimationTimer {
   static const int PAUSED = 2;
   inline int getFrame() const { return animation->getFrame(current_clip, current_frame); }
   void tick(Uint32 dt);
+  void playClipOnce(int id, int next_id);
   void setClip(int id);
   void start();
 };

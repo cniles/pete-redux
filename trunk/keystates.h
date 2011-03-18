@@ -6,6 +6,7 @@ struct KeyStates {
   bool up_held;
   bool down_held;
   bool space_held;
+  bool ctrl_held;
   KeyStates();
 };
 

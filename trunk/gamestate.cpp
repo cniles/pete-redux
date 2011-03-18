@@ -64,7 +64,7 @@ void GameState::initialize() {
 	collision_shape->calculateLocalInertia(mass,inertia);
 	btRigidBody::btRigidBodyConstructionInfo rigid_body_ci(mass, motion_state, collision_shape, inertia);
 	btRigidBody* rigid_body = new btRigidBody(rigid_body_ci);
-	dynamics_world->addRigidBody(rigid_body);
+	dynamics_world->addRigidBody(rigid_body, COL_LEVEL, COL_ENEMY | COL_PLAYER);
 	level_bodies.push_back(rigid_body);
 	level_shapes.push_back(collision_shape);
 	x = stop_x;

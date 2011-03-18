@@ -51,6 +51,9 @@ void initGL() {
 
 void handleKeys(SDL_Event& event, KeyStates& key_states) {
   bool set_value = (event.type == SDL_KEYDOWN)? true : false;
+  if(event.key.keysym.sym == SDLK_LCTRL) {
+    key_states.ctrl_held = set_value;
+  }
   if(event.key.keysym.sym == SDLK_UP) {
     key_states.up_held = set_value;
   }

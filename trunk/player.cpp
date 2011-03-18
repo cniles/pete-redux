@@ -47,6 +47,11 @@ void Player::calcIsOnGround() {
   }  
 }
 
+void Player::fireShotgun() {
+  std::cerr << "Boom!" << std::endl;
+  animation_timer.playClipOnce(1, 0);
+}
+
 bool Player::isOnGround() {
   return on_ground;
 }
@@ -59,16 +64,18 @@ Player::Player(int tile_x, int tile_y, GameState* gamestate) {
   animation_timer = AnimationTimer(&animation);
   animation_timer.start();
 
+  shoot_timer = 0.0f;
 
   flip_sprite = false;
   space_held = false;
   on_ground = false;
-
-  btVector3 initial_position(tile_x+0.5f, tile_y+0.5f, 0);
-
+  can_shoot = true;
+  ctrl_released = true;
+  position = btTransform(btQuaternion(0,0,0,1), btVector3(tile_x+0.5f, tile_y+0.5f, 0));
+  
   btDefaultMotionState* motion_state = 
-    new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),initial_position));
-  btScalar mass = 0.8;
+			 new btDefaultMotionState(position);
+  btScalar mass = 0.7;
   btVector3 inertia(0,0,0);
   collision_shape.calculateLocalInertia(mass,inertia);
   btRigidBody::btRigidBodyConstructionInfo rigid_body_ci(mass, motion_state, &collision_shape, inertia);
@@ -76,7 +83,7 @@ Player::Player(int tile_x, int tile_y, GameState* gamestate) {
   rigid_body->setAngularFactor(btScalar(0));
   rigid_body->setActivationState(DISABLE_DEACTIVATION);
   rigid_body->setUserPointer((void*)this);
-  gamestate->dynamics_world->addRigidBody(rigid_body);
+  gamestate->dynamics_world->addRigidBody(rigid_body, COL_PLAYER, COL_LEVEL | COL_ENEMY);
 }
 
 Player::~Player() {
@@ -127,16 +134,36 @@ void Player::handleKeyStates(const KeyStates& key_states) {
       }
     }
   }
-  if(key_states.space_held==false) {
+  else if(key_states.space_held == false){
     space_held = false;
   }
+
+  if(key_states.ctrl_held) {
+    if(can_shoot) {
+      fireShotgun();
+      can_shoot = false;
+      shoot_timer = SHOOT_PAUSE_TIME;
+    }
+  }
+  else {
+    ctrl_released = true;
+  }
+  
 };
 
 void Player::update(Uint32 dt, const KeyStates& key_states) {
   calcIsOnGround();
   handleKeyStates(key_states);
   animation_timer.tick(dt);
+
   float dtf = float(dt)/1000.0f;
+  if(!can_shoot) {
+    shoot_timer -= dtf;
+    if(shoot_timer <= 0) {
+      can_shoot = true;
+    }
+  }
+
   btTransform transform;
   btVector3 origin;
   rigid_body->getMotionState()->getWorldTransform(transform);
@@ -153,4 +180,21 @@ float Player::getY() {
   btTransform transform;
   rigid_body->getMotionState()->getWorldTransform(transform);
   return transform.getOrigin().getY();
+
+}
+
+PlayerMotionState::PlayerMotionState(const btTransform& initial_position, Player* player) 
+  : position(initial_position), player(player) {
+}
+
+PlayerMotionState::~PlayerMotionState() {
+}
+
+void PlayerMotionState::getWorldTransform(btTransform& world_transform) const {
+  world_transform = position;
+}
+
+void PlayerMotionState::setWorldTransform(const btTransform& world_transform) {
+  position = world_transform;
+  player->setPosition(position);
 }

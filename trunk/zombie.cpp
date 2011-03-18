@@ -11,6 +11,7 @@ ZombieStateMoving::ZombieStateMoving(PlatformAI* ai)
 
 void ZombieStateMoving::onEnter() {
   btVector3 destination = ai->getFurthestFacingPointOnPlatform();
+  
   if((ai->getOwner()->getPosition() - destination).fuzzyZero()) {
     ai->getOwner()->changeDirection();
     destination = ai->getFurthestFacingPointOnPlatform();
@@ -26,21 +27,23 @@ void ZombieStateMoving::onEnter() {
 void ZombieStateMoving::onLeave() {
 }
 
-void ZombieStateMoving::onUpdate(float dt) {
-  btVector3 current_position = ai->getOwner()->getPosition();
-  btVector3 velocity(ai->getOwner()->getDirection() * dt, 0.0f, 0.0f);
+void ZombieStateMoving::onUpdate(float dt) { 
+  GameObject* owner = ai->getOwner();
+
+  // Check if object is near it's destination & turn it around if so
+  const static float in_range_eps = 0.1f;
   btVector3 destination = ai->getDestination();
-
-  current_position += velocity;
-
-  if(current_position.distance(destination) <= velocity.length()) {
-    ai->getOwner()->setPosition(destination);
-    ai->getOwner()->changeDirection();
+  btVector3 current_position = owner->getPosition();
+  if(current_position.distance(destination) <= in_range_eps) {
+    owner->changeDirection();
     ai->setDestination(ai->getFurthestFacingPointOnPlatform());
   }
-  else {
-    ai->getOwner()->setPosition(current_position);
-  }
+
+  // Nudge the object in the correct direction.
+  btVector3 force(owner->getDirection(), 0.0f, 0.0f);
+  force = force * 3;
+  btRigidBody* body = owner->getRigidBody();
+  body->applyCentralForce(force);
 }
 
 void ZombieStateIdle::onEnter() {
@@ -58,7 +61,7 @@ void ZombieStateIdle::onUpdate(float dt) {
 }
 
 Zombie::Zombie(float x, float y, GameState* gamestate) 
-  : GameObject(x,y, gamestate) , animation_timer(AnimationTimer(&animation)) {
+  : GameObject(x,y, gamestate, COL_ENEMY, COL_LEVEL | COL_PLAYER) , animation_timer(AnimationTimer(&animation)) {
   if(animation.getClipCount()==0) {
     animation = Animation("gfx/zombie");
   }
