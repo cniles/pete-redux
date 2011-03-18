@@ -47,9 +47,29 @@ void Player::calcIsOnGround() {
   }  
 }
 
+ShotgunCallback::ShotgunCallback(int direction)
+  : direction(direction) {
+}
+
+btScalar ShotgunCallback::addSingleResult(btCollisionWorld::LocalRayResult& ray_result, bool normal_in_world_space) {
+  btVector3 source_vector(direction * 30.0f, 0.0f, 0.0f);
+  btRigidBody* body = dynamic_cast<btRigidBody*>(ray_result.m_collisionObject);
+  body->applyCentralForce(source_vector);
+  std::cerr << "A hit!" << std::endl;
+  return btScalar(0.0f);
+}
+
 void Player::fireShotgun() {
   std::cerr << "Boom!" << std::endl;
   animation_timer.playClipOnce(1, 0);
+  btVector3 origin = position.getOrigin(); 
+  std::cerr << origin.getX() << ", " << origin.getY() << ", " << origin.getZ() << std::endl;
+  for(int i = 0; i < 3; i++) {
+    btVector3 bullet_path(direction * 8.0, i*0.5f, 0.0f);
+    bullet_path += origin;
+    ShotgunCallback callback(direction);
+    gamestate->dynamics_world->rayTest(origin, bullet_path, callback);
+  }
 }
 
 bool Player::isOnGround() {
@@ -72,9 +92,9 @@ Player::Player(int tile_x, int tile_y, GameState* gamestate) {
   can_shoot = true;
   ctrl_released = true;
   position = btTransform(btQuaternion(0,0,0,1), btVector3(tile_x+0.5f, tile_y+0.5f, 0));
-  
-  btDefaultMotionState* motion_state = 
-			 new btDefaultMotionState(position);
+  direction = 1;
+  btMotionState* motion_state = 
+    new PlayerMotionState(position, this);
   btScalar mass = 0.7;
   btVector3 inertia(0,0,0);
   collision_shape.calculateLocalInertia(mass,inertia);
@@ -83,7 +103,7 @@ Player::Player(int tile_x, int tile_y, GameState* gamestate) {
   rigid_body->setAngularFactor(btScalar(0));
   rigid_body->setActivationState(DISABLE_DEACTIVATION);
   rigid_body->setUserPointer((void*)this);
-  gamestate->dynamics_world->addRigidBody(rigid_body, COL_PLAYER, COL_LEVEL | COL_ENEMY);
+  gamestate->dynamics_world->addRigidBody(rigid_body,  COL_PLAYER, COL_LEVEL | COL_ENEMY);
 }
 
 Player::~Player() {
@@ -117,10 +137,12 @@ void Player::handleKeyStates(const KeyStates& key_states) {
   float x_acceleration = isOnGround()? PLAYER_ACCELERATION : PLAYER_IN_AIR_ACCELERATION;
   if(key_states.right_held) {
     flip_sprite = false;
+    direction = 1;
     rigid_body->applyCentralForce(btVector3(x_acceleration, 0.0f, 0.0f));
   }
   else if(key_states.left_held) {
     flip_sprite = true;
+    direction = -1;
     rigid_body->applyCentralForce(btVector3(-x_acceleration, 0.0f, 0.0f));
   }
 
