@@ -11,12 +11,12 @@ using std::string;
 
 // quick state-adding macro for code brevity.
 #define MAKE_STATE( STATE_NAME ) class STATE_NAME : public State { \
- public: \
-  STATE_NAME(PlatformAI* ai); \
-  void onEnter(); \
-  void onUpdate(float); \
-  void onLeave(); \
-};
+  public:							   \
+  STATE_NAME(PlatformAI* ai) : State(ai) {}			   \
+    void onEnter();						   \
+    void onUpdate(float);					   \
+    void onLeave();						   \
+  };
 
 
 struct AIVar {

@@ -6,25 +6,9 @@
 
 GameState::GameState(Level level)
   : level(level) {
-  initialize();
-}
-
-GameState::~GameState() {
-  delete player;
-  for(int i = 0; i < objects.size(); i++) {
-    delete objects[i];
-  }
-  for(int i = 0; i < level_bodies.size(); i++) {
-    delete level_bodies[i]->getMotionState();
-    delete level_bodies[i];
-    delete level_shapes[i];
-  }
-  delete dynamics_world;
-}
-
-void GameState::initialize() {
   std::cerr << "Initializing dynamics world...";
-  dynamics_world = createPhysicsWorld();
+  bullet_core = createPhysicsWorld();
+  dynamics_world = bullet_core->dynamics_world;
   std::cerr << "Successfully created dynamics world." << std::endl;
 
   std::cerr << "Initializing player...";
@@ -64,6 +48,7 @@ void GameState::initialize() {
 	collision_shape->calculateLocalInertia(mass,inertia);
 	btRigidBody::btRigidBodyConstructionInfo rigid_body_ci(mass, motion_state, collision_shape, inertia);
 	btRigidBody* rigid_body = new btRigidBody(rigid_body_ci);
+	rigid_body->setUserPointer(NULL);
 	dynamics_world->addRigidBody(rigid_body, COL_LEVEL, COL_ENEMY | COL_PLAYER);
 	level_bodies.push_back(rigid_body);
 	level_shapes.push_back(collision_shape);
@@ -75,4 +60,17 @@ void GameState::initialize() {
     }
   }
   std::cerr << "Successfully initializinged level physics." << std::endl;
+}
+
+GameState::~GameState() {
+  delete player;
+  for(int i = 0; i < objects.size(); i++) {
+    delete objects[i];
+  }
+  for(int i = 0; i < level_bodies.size(); i++) {
+    delete level_bodies[i]->getMotionState();
+    delete level_bodies[i];
+    delete level_shapes[i];
+  }
+  delete bullet_core;
 }

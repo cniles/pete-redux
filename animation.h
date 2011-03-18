@@ -42,10 +42,13 @@ class AnimationTimer {
   static const int PLAYING = 1;
   static const int PAUSED = 2;
   inline int getFrame() const { return animation->getFrame(current_clip, current_frame); }
-  void tick(Uint32 dt);
+  inline int getState() { return status; }
+
+  void start();
+  void stop();
   void playClipOnce(int id, int next_id);
   void setClip(int id);
-  void start();
+  void tick(Uint32 dt);
 };
 
 #endif

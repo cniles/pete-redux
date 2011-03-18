@@ -13,7 +13,7 @@
 #define SHOOT_PAUSE_TIME 0.75f
 
 class GameState;
-class Player {
+class Player : public DamageTaker {
   btRigidBody* rigid_body;
   btTransform position;
   GameState* gamestate;
@@ -42,6 +42,7 @@ class Player {
   float getX();
   float getY();
   void draw() const;
+  void takeDamage(int,int);
   inline void setPosition(const btTransform& position) { this->position = position; }
   void update(Uint32 dt, const KeyStates& key_states);
   void operator=(const Player& other);
