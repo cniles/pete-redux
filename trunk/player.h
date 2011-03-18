@@ -10,7 +10,7 @@
 #define PLAYER_TOP_X_SPEED 5.0f
 #define PLAYER_X_ACCELERATION 7.5f
 #define PLAYER_X_DECELERATION 12.0f
-#define SHOOT_PAUSE_TIME 1.5f
+#define SHOOT_PAUSE_TIME 0.75f
 
 class GameState;
 class Player {
@@ -21,6 +21,7 @@ class Player {
   static Animation animation;
   AnimationTimer animation_timer;
   float shoot_timer;
+  int direction;
   
   bool space_held;
   bool on_ground;
@@ -55,6 +56,13 @@ class PlayerMotionState : public btMotionState {
   btTransform position;
  public:
   PlayerMotionState(const btTransform& initial_position, Player* player);
+};
+
+class ShotgunCallback : public btCollisionWorld::RayResultCallback {
+    int direction;
+public:
+    ShotgunCallback(int direction);
+    btScalar addSingleResult(btCollisionWorld::LocalRayResult& ray_result, bool normal_in_world_space);
 };
 
 #endif
