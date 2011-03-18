@@ -12,34 +12,20 @@ Clip::Clip(int frame_count, int frame_duration)
 Animation::Animation() {
 }
 
-/*void printSurfaceFlags(SDL_Surface* surface) {
-  const char* yes = "YES";
-  const char* no = "NO";
-  const char* srcalpha_on = (surface->flags & SDL_SRCALPHA)? yes : no;
-  const char* amask_defined = (surface->format->Amask != 0)? yes : no;
-  const char* srccolorkey_on = (surface->flags & SDL_SRCCOLORKEY)? yes : no;
-  int bpp = surface->format->BitsPerPixel;
-  std::cerr << "SDL_SRCALPHA: " << srcalpha_on << ", Amask def: " << amask_defined << ", SDL_SRCCOLORKEY: " << srccolorkey_on << ", BPP: " << bpp << std::endl;
-  }*/
-
 void Animation::parseClip(int index, Clip& clip, SDL_Surface* source) {
   SDL_Surface* sub_image = SDL_CreateRGBSurface(0, frame_size, frame_size, 32, RMASK, GMASK, BMASK, AMASK);
   int x = index * frame_size;
 
   SDL_SetAlpha(source, 0, 0);
   SDL_SetAlpha(sub_image, 0, 0);
-
-  /*std::cerr << "src--";
-  printSurfaceFlags(source);
-  std::cerr << "dst--";
-  printSurfaceFlags(sub_image);*/
-
-  SDL_Rect src_rect = {x*frame_size, 0, frame_size, frame_size};
+ 
+  SDL_Rect src_rect = {x, 0, frame_size, frame_size};
   SDL_Rect dst_rect = {0, 0, frame_size, frame_size };
   for(int i = 0; i < clip.frame_count; i++) {
     SDL_BlitSurface(source, &src_rect, sub_image, &dst_rect);
     src_rect.y += frame_size;
     clip.frames.push_back(getGLTexture(sub_image));
+    SDL_FillRect(sub_image, &dst_rect, SDL_MapRGBA(sub_image->format, 0, 0, 0, 0));
   }
   SDL_FreeSurface(sub_image);
 }
@@ -68,6 +54,7 @@ void AnimationTimer::advanceFrame() {
   current_frame++;
   if(current_frame >= animation->getFrameCount(current_clip)) {
     current_frame = 0;
+    current_clip = next_clip;
   }
 }
 
@@ -81,7 +68,22 @@ void AnimationTimer::tick(Uint32 dt) {
   }
 }
 
+void AnimationTimer::playClipOnce(int id, int next_id) {
+  if(0 <= id && id < animation->getClipCount()) {
+    next_clip = next_id;
+    current_clip = id;
+    timer = 0;
+    current_frame = 0;
+  }
+}
+
 void AnimationTimer::setClip(int id) {
+  if(0 <= id && id < animation->getClipCount()) {
+    next_clip = id;
+    current_clip = id;
+    timer = 0;
+    current_frame = 0;
+  }
 }
 
 void AnimationTimer::start() {
@@ -90,10 +92,10 @@ void AnimationTimer::start() {
 }
 
 AnimationTimer::AnimationTimer() 
-  : current_clip(0), current_frame(0), timer(0), status(0), animation(NULL) {
+  : current_clip(0), next_clip(0), current_frame(0), timer(0), status(0), animation(NULL) {
 }
 
 AnimationTimer::AnimationTimer(Animation* animation)
-  : current_clip(0), current_frame(0), timer(0), status(0), animation(animation) {
+  : current_clip(0), next_clip(0), current_frame(0), timer(0), status(0), animation(animation) {
 
 }

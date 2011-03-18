@@ -85,7 +85,7 @@ btVector3 PlatformAI::getFurthestFacingPointOnPlatform() {
       position_found = true;
     }
   }
-  return btVector3(x, origin_y, 0);
+  return btVector3(x + 0.5f, origin_y + 0.5f, 0);
 }
 
 void PlatformAI::setDestination(btVector3 destination) {
