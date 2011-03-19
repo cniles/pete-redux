@@ -1,26 +1,22 @@
 #ifndef ZOMBIE_H_
 #define ZOMBIE_H_
 #define ZOMBIE_INITIAL_HEALTH_ 3
-#include "animation.h"
-#include "gamestate.h"
-#include "gameobject.h"
-#include "platformai.h"
+
+#include "statemachineobject.h"
 
 MAKE_STATE(ZombieStateMoving)
 MAKE_STATE(ZombieStateIdle)
 MAKE_STATE(ZombieStateDying)
 MAKE_STATE(ZombieStateDead)
 
-class Zombie : public GameObject {
+class Zombie : public StateMachineObject {
   const static int INITIAL_HEALTH = ZOMBIE_INITIAL_HEALTH_;
-  PlatformAI ai;
+  static Animation animation;
   int health;
  public:
-  static Animation animation;
-  Zombie(float x, float y, GameState*);
-  void update(float dt);
-  void draw();
+  Zombie(GameState*, btVector3 position);
   void takeDamage(int, int);
+  static void loadStaticAssets();
 };
 
 #endif

@@ -13,7 +13,7 @@
 #include "gamestate.h"
 #include "texture.h"
 #include "draw.h"
-
+#include "zombie.h"
 int screen_width = 640;
 int screen_height = 480;
 int screen_bpp = 32;
@@ -29,6 +29,10 @@ KeyStates::KeyStates() {
 GLuint loadTexture(const char* file_name) {
   SDL_Surface* surface = IMG_Load(file_name);
   return getGLTexture(surface);
+}
+
+void loadStaticAssets() {
+  Zombie::loadStaticAssets();
 }
 
 void initSDL() {
@@ -161,6 +165,7 @@ void run() {
 int main() {
   initSDL();
   initGL();
+  loadStaticAssets();
   background = loadTexture(BACKGROUND_IMAGE_FILE_NAME);
   run();
   SDL_Quit();

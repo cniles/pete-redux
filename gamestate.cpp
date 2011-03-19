@@ -21,7 +21,7 @@ GameState::GameState(Level level)
   while(token_iter != level.getTokensEnd()) {
     switch(token_iter->id) {
     case 0:
-      objects.push_back(new Zombie(token_iter->x, token_iter->y, this));
+      objects.push_back(new Zombie(this, btVector3(token_iter->x + 0.5f, token_iter->y + 0.5f, 0.0f)));
       break;
     }
     token_iter++;
