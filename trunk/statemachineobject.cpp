@@ -2,7 +2,7 @@
 #include "gamestate.h"
 
 State::State(StateMachineObject* owner)
-  : owner(owner) {
+  : __owner(owner) {
 }
 
 StateMachineObject::StateMachineObject(GameState* gamestate, btVector3 position, Animation* animation, CollisionScheme scheme, State* state) 

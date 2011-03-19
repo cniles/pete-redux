@@ -5,8 +5,7 @@
 
 class StateMachineObject;
 class State {
- protected:
-  StateMachineObject* owner;
+  void* __owner;
  public:
   State(StateMachineObject* owner);
   virtual void onEnter() = 0;
@@ -15,19 +14,21 @@ class State {
 };
 
 // quick state-adding macro for code brevity.
-#define MAKE_STATE( STATE_NAME ) class STATE_NAME : public State { \
-  public:							   \
-  STATE_NAME(StateMachineObject* owner) : State(owner) {}			   \
-    void onEnter();						   \
-    void onUpdate(float);					   \
-    void onLeave();						   \
+#define MAKE_STATE( STATE_NAME, OWNER_CLASS )				\
+  class STATE_NAME : public State {					\
+    OWNER_CLASS* owner;							\
+  public:								\
+  STATE_NAME(StateMachineObject* owner) : State(owner),			\
+      owner((OWNER_CLASS*)owner) {}					\
+    void onEnter();							\
+    void onUpdate(float);						\
+    void onLeave();							\
   };
-
+  
 class StateMachineObject : public PhysicsObject {
  private:
   State* current_state;
   btVector3 destination;
-
  protected:
   StateMachineObject(GameState* gamestate, btVector3 position, Animation* animation, CollisionScheme scheme, State* state);
   void update(float dt);

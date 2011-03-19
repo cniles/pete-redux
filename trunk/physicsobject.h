@@ -17,6 +17,7 @@ struct CollisionScheme {
 
 class PhysicsObject : public GameObject {
  private:
+  bool collision_with_player_detected;
 
  protected:
   static btCapsuleShape child_default_collision_shape;
@@ -32,8 +33,11 @@ class PhysicsObject : public GameObject {
   btRigidBody* rigid_body;
   void changeCollisionScheme(CollisionScheme scheme);
   void removeCollisionBody();
+
  public:
   inline btRigidBody* getRigidBody() { return rigid_body; }
+  inline bool notifyCollisionWithPlayer() { collision_with_player_detected = true; }
+  bool collisionWithPlayerDetected();
 };
 
 class GameObjectMotionState : public btMotionState {

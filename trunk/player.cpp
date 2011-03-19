@@ -9,74 +9,6 @@ Animation Player::animation = Animation();
 btCapsuleShape Player::child_collision_shape(0.25, 0.4);
 btConvex2dShape Player::collision_shape(&Player::child_collision_shape);
 
-void Player::calcIsOnGround() {
-  on_ground = false;
-  btDispatcher* dispatcher = gamestate->dynamics_world->getDispatcher();
-  int num_manifolds = dispatcher->getNumManifolds();
-  for(int i = 0; i < num_manifolds; i++) {
-    btPersistentManifold* contact_manifold = dispatcher->getManifoldByIndexInternal(i);
-    btCollisionObject* obj_a = static_cast<btCollisionObject*>(contact_manifold->getBody0());
-    btCollisionObject* obj_b = static_cast<btCollisionObject*>(contact_manifold->getBody1());
-    if(obj_a->getUserPointer() == (void*)this || obj_b->getUserPointer() == (void*)this) {
-      int num_contacts = contact_manifold->getNumContacts();
-      if(num_contacts) {
-	btVector3 average_a(0.0f, 0.0f, 0.0f);
-	btVector3 average_b(0.0f, 0.0f, 0.0f);
-	for(int j = 0; j < num_contacts; j++) {
-	btManifoldPoint& pt = contact_manifold->getContactPoint(j);
-	average_a += pt.getPositionWorldOnA();
-	average_b += pt.getPositionWorldOnB();
-	}
-	
-	float final_x = ((average_a.getX() + average_b.getX())/num_contacts) * 0.5f;
-	float final_y = ((average_a.getY() + average_b.getY())/num_contacts) * 0.5f;
-	float final_z = ((average_a.getZ() + average_b.getZ())/num_contacts) * 0.5f;
-	
-	contact_manifold->clearManifold();
-	
-	btTransform trans;
-	rigid_body->getMotionState()->getWorldTransform(trans);
-	float body_y = trans.getOrigin().getY();
-	float body_x_rel = final_x - trans.getOrigin().getX();
-	if(final_y < body_y && body_x_rel < 0.2f && body_x_rel > -0.2f) {
-	  on_ground = true;
-	  return;
-	}
-      }
-    }
-  }  
-}
-
-
-ShotgunCallback::ShotgunCallback(int direction) : direction(direction) {}
-
-btScalar ShotgunCallback::addSingleResult(btCollisionWorld::LocalRayResult& ray_result, bool normal_in_world_space) {
-  btVector3 source_vector(direction * 100.0f, 0.0f, 0.0f);
-  btRigidBody* body = dynamic_cast<btRigidBody*>(ray_result.m_collisionObject);
-  void* ptr = body->getUserPointer();
-  DamageTaker* target = reinterpret_cast<DamageTaker*>(ptr);
-  if(target!=NULL) {
-    target->takeDamage(1,0);
-  }
-  body->applyCentralForce(source_vector);
-  return btScalar(0.0f);
-}
-
-void Player::fireShotgun() {
-  animation_timer.playClipOnce(1, 0);
-  btVector3 origin = position.getOrigin(); 
-  for(int i = 0; i < 3; i++) {
-    btVector3 bullet_path(direction * 5.0, i*0.5f, 0.0f);
-    bullet_path += origin;
-    ShotgunCallback callback(direction);
-    gamestate->dynamics_world->rayTest(origin, bullet_path, callback);
-  }
-}
-
-bool Player::isOnGround() {
-  return on_ground;
-}
-
 Player::Player(int tile_x, int tile_y, GameState* gamestate) {
   if(animation.getClipCount() == 0) {
     animation = Animation("gfx/player");
@@ -206,6 +138,73 @@ float Player::getY() {
   rigid_body->getMotionState()->getWorldTransform(transform);
   return transform.getOrigin().getY();
 
+}
+
+void Player::calcIsOnGround() {
+  on_ground = false;
+  btDispatcher* dispatcher = gamestate->dynamics_world->getDispatcher();
+  int num_manifolds = dispatcher->getNumManifolds();
+  for(int i = 0; i < num_manifolds; i++) {
+    btPersistentManifold* contact_manifold = dispatcher->getManifoldByIndexInternal(i);
+    btCollisionObject* obj_a = static_cast<btCollisionObject*>(contact_manifold->getBody0());
+    btCollisionObject* obj_b = static_cast<btCollisionObject*>(contact_manifold->getBody1());
+    if(obj_a->getUserPointer() == (void*)this || obj_b->getUserPointer() == (void*)this) {
+      int num_contacts = contact_manifold->getNumContacts();
+      if(num_contacts) {
+	btVector3 average_a(0.0f, 0.0f, 0.0f);
+	btVector3 average_b(0.0f, 0.0f, 0.0f);
+	for(int j = 0; j < num_contacts; j++) {
+	btManifoldPoint& pt = contact_manifold->getContactPoint(j);
+	average_a += pt.getPositionWorldOnA();
+	average_b += pt.getPositionWorldOnB();
+	}
+	
+	float final_x = ((average_a.getX() + average_b.getX())/num_contacts) * 0.5f;
+	float final_y = ((average_a.getY() + average_b.getY())/num_contacts) * 0.5f;
+	float final_z = ((average_a.getZ() + average_b.getZ())/num_contacts) * 0.5f;
+	
+	contact_manifold->clearManifold();
+	
+	btTransform trans;
+	rigid_body->getMotionState()->getWorldTransform(trans);
+	float body_y = trans.getOrigin().getY();
+	float body_x_rel = final_x - trans.getOrigin().getX();
+	if(final_y < body_y && body_x_rel < 0.2f && body_x_rel > -0.2f) {
+	  on_ground = true;
+	  return;
+	}
+      }
+    }
+  }  
+}
+
+bool Player::isOnGround() {
+  return on_ground;
+}
+
+void Player::fireShotgun() {
+  animation_timer.playClipOnce(1, 0);
+  btVector3 origin = position.getOrigin(); 
+  for(int i = 0; i < 3; i++) {
+    btVector3 bullet_path(direction * 5.0, i*0.5f, 0.0f);
+    bullet_path += origin;
+    ShotgunCallback callback(direction);
+    gamestate->dynamics_world->rayTest(origin, bullet_path, callback);
+  }
+}
+
+ShotgunCallback::ShotgunCallback(int direction) : direction(direction) {}
+
+btScalar ShotgunCallback::addSingleResult(btCollisionWorld::LocalRayResult& ray_result, bool normal_in_world_space) {
+  btVector3 source_vector(direction * 100.0f, 0.0f, 0.0f);
+  btRigidBody* body = dynamic_cast<btRigidBody*>(ray_result.m_collisionObject);
+  void* ptr = body->getUserPointer();
+  DamageTaker* target = reinterpret_cast<DamageTaker*>(ptr);
+  if(target!=NULL) {
+    target->takeDamage(1,0);
+  }
+  body->applyCentralForce(source_vector);
+  return btScalar(0.0f);
 }
 
 PlayerMotionState::PlayerMotionState(const btTransform& initial_position, Player* player) 

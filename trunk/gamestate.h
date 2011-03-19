@@ -1,6 +1,6 @@
 #ifndef GAMESTATE_H_
 #define GAMESTATE_H_
-
+#include "debug.h"
 #include <vector>
 #include "bullet.h"
 #include "gameobject.h"

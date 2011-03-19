@@ -107,5 +107,4 @@ AnimationTimer::AnimationTimer()
 
 AnimationTimer::AnimationTimer(Animation* animation)
   : current_clip(0), next_clip(0), current_frame(0), timer(0), status(0), animation(animation) {
-
 }
