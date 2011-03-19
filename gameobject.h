@@ -1,6 +1,8 @@
 #ifndef GAMEOBJECT_H_
 #define GAMEOBJECT_H_
 
+#include "debug.h"
+
 #include <btBulletDynamicsCommon.h>
 
 #include "damagetaker.h"
@@ -25,6 +27,7 @@ class GameObject : public DamageTaker {
   inline void changeDirection() { direction *= -1; }
 
   inline int getAnimationState() { return animation_timer.getState(); }
+  inline AnimationTimer* getAnimationTimer() { return &animation_timer; }
  
   virtual void draw();
   virtual void update(float) = 0;

@@ -6,6 +6,7 @@
 GameObject::GameObject(GameState* gamestate, btVector3 position, Animation* animation)
   : gamestate(gamestate), animation_timer(AnimationTimer(animation)), 
     position(position), direction(-1) {
+  DEBUG_OUT("Create GameObject");
   animation_timer.start();
 }
 

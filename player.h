@@ -22,6 +22,7 @@ class Player : public DamageTaker {
   AnimationTimer animation_timer;
   float shoot_timer;
   int direction;
+  int health;
   
   bool space_held;
   bool on_ground;

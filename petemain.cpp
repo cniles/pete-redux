@@ -119,6 +119,33 @@ void draw(const GameState& gamestate) {
   SDL_GL_SwapBuffers();
 }
 
+void processCollisions(GameState* gamestate) {
+  int num_manifolds = gamestate->dynamics_world->getDispatcher()->getNumManifolds();
+
+  for(int i = 0; i < num_manifolds; i++) {
+    btPersistentManifold* contact_manifold = gamestate->dynamics_world->getDispatcher()->getManifoldByIndexInternal(i);
+
+    btCollisionObject* object_a = static_cast<btCollisionObject*>(contact_manifold->getBody0());
+    btCollisionObject* object_b = static_cast<btCollisionObject*>(contact_manifold->getBody1());
+
+    void* pointer_a = object_a->getUserPointer();
+    void* pointer_b = object_b->getUserPointer();
+
+    if(pointer_a == NULL || pointer_b == NULL) continue;
+
+    if(pointer_a == gamestate->player || pointer_b == gamestate->player) {     
+      PhysicsObject* other = (PhysicsObject*)((pointer_a == gamestate->player) ? pointer_b : pointer_a);
+      other->notifyCollisionWithPlayer();
+      //gamestate->player->notifyCollisionWithObject(other);
+    }
+
+    /*int num_contacts = contact_manifold->getNumContacts();
+    for(int j = 0; j < num_contacts; j++) {
+      btManifoldPoint& point = contact_manifold->getContactPoint(j);
+      }*/
+  }
+}
+
 Uint32 start = 0;
 Uint32 stop = 0;
 void run() {
@@ -150,8 +177,12 @@ void run() {
 	}
       }
     }
+
     gamestate.dynamics_world->stepSimulation(dtf,10);
+    processCollisions(&gamestate);
+
     gamestate.player->update(elapsed, key_states);
+
     std::vector<GameObject*>::const_iterator object_iter = gamestate.objects.begin();
     while(object_iter != gamestate.objects.end()) {
       (*object_iter)->update(dtf);

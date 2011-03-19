@@ -7,7 +7,8 @@ btConvex2dShape PhysicsObject::default_collision_shape(&PhysicsObject::child_def
 CollisionScheme PhysicsObject::default_collision_scheme(COL_ENEMY, COL_LEVEL | COL_PLAYER, btScalar(1.0), &PhysicsObject::default_collision_shape);
 
 PhysicsObject::PhysicsObject(GameState* gamestate, btVector3 position, Animation* animation, CollisionScheme scheme)
-  : GameObject(gamestate, position, animation) {
+  : GameObject(gamestate, position, animation), collision_with_player_detected(false) {
+  DEBUG_OUT("Creating physics object...");
   btMotionState* motion_state = new GameObjectMotionState(btTransform(btQuaternion(0,0,0,1), position), this);
   btVector3 inertia(0,0,0);
   scheme.collision_shape->calculateLocalInertia(scheme.mass, inertia);
@@ -50,6 +51,12 @@ void PhysicsObject::changeCollisionScheme(CollisionScheme scheme) {
   rigid_body->setLinearVelocity(linear_velocity);
 
   gamestate->dynamics_world->addRigidBody(rigid_body, scheme.collision_group, scheme.collision_flags);  
+}
+
+bool PhysicsObject::collisionWithPlayerDetected() {
+  bool temp = collision_with_player_detected;
+  collision_with_player_detected = false;
+  return temp;
 }
 
 CollisionScheme::CollisionScheme(int group, int flags, btScalar mass, btCollisionShape* shape)

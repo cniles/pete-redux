@@ -4,34 +4,39 @@
 
 Animation Zombie::animation = Animation();
 
-void ZombieStateDead::onEnter() {}
-void ZombieStateDead::onUpdate(float) {}
-void ZombieStateDead::onLeave() {}
+void Zombie::StateDead::onEnter() {}
+void Zombie::StateDead::onUpdate(float) {}
+void Zombie::StateDead::onLeave() {}
 
-void ZombieStateDying::onEnter() {}
-void ZombieStateDying::onUpdate(float dt) {
+
+
+
+void Zombie::StateDying::onEnter() {}
+void Zombie::StateDying::onUpdate(float dt) {
   if(owner->getAnimationState() == AnimationTimer::STOPPED) {
-    owner->changeState(new ZombieStateDead(owner));
+    owner->changeState(new Zombie::StateDead(owner));
   }
 }
-void ZombieStateDying::onLeave() {}
+void Zombie::StateDying::onLeave() {}
 
-void ZombieStateMoving::onEnter() {
+
+
+
+
+void Zombie::StateMoving::onEnter() {
   btVector3 destination = owner->getFurthestFacingPointOnPlatform();
-  
+  AI_DEBUG_OUT("Entered ZombieMoveState");
   if((owner->getPosition() - destination).fuzzyZero()) {
     owner->changeDirection();
-    destination = owner->getFurthestFacingPointOnPlatform();
-    
+    destination = owner->getFurthestFacingPointOnPlatform();    
     if((owner->getPosition() - destination).fuzzyZero()) {
       owner->changeDirection();
-      owner->changeState(new ZombieStateIdle(owner));
+      owner->changeState(new Zombie::StateIdle(owner));
     }
   }
   owner->setDestination(destination);    
 }
-void ZombieStateMoving::onLeave() {}
-void ZombieStateMoving::onUpdate(float dt) {
+void Zombie::StateMoving::onUpdate(float dt) {
   // Check if object is near it's destination & turn it around if so
   const static float in_range_eps = 0.1f;
   btVector3 destination = owner->getDestination();
@@ -40,19 +45,37 @@ void ZombieStateMoving::onUpdate(float dt) {
     owner->changeDirection();
     owner->setDestination(owner->getFurthestFacingPointOnPlatform());
   }
-
+  if(owner->attack_timer > 0.0) {
+    owner->attack_timer -= dt;
+    if(owner->attack_timer <= 0) {
+      owner->can_attack=true;
+    }
+  }
+  if(owner->can_attack) {
+    if(owner->collisionWithPlayerDetected()) {
+      owner->can_attack = false;
+      owner->getAnimationTimer()->playClipOnce(1,0);
+      owner->attack_timer = Zombie::ATTACK_COOLDOWN;
+    }
+  }
   // Nudge the object in the correct direction.
   btVector3 force(owner->getDirection(), 0.0f, 0.0f);
   force = force * 3;
   owner->getRigidBody()->applyCentralForce(force);
 }
+void Zombie::StateMoving::onLeave() {}
 
-void ZombieStateIdle::onEnter() {}
-void ZombieStateIdle::onUpdate(float dt) {}
-void ZombieStateIdle::onLeave() {}
+
+
+void Zombie::StateIdle::onEnter() {}
+void Zombie::StateIdle::onUpdate(float dt) {}
+void Zombie::StateIdle::onLeave() {}
+
+
 
 Zombie::Zombie(GameState* gamestate, btVector3 position) 
-  : StateMachineObject(gamestate, position, &animation, default_collision_scheme, new ZombieStateMoving(this)), health(INITIAL_HEALTH) {
+  : StateMachineObject(gamestate, position, &animation, default_collision_scheme, new Zombie::StateMoving(this)), health(INITIAL_HEALTH),
+    can_attack(true) {
 }
 
 void Zombie::takeDamage(int damage, int type) {
@@ -63,7 +86,7 @@ void Zombie::takeDamage(int damage, int type) {
       scheme.collision_flags = COL_LEVEL;
       changeCollisionScheme(scheme);
       animation_timer.playClipOnce(2, -1);
-      changeState(new ZombieStateDying(this));
+      changeState(new Zombie::StateDying(this));
     }
   }
 }
