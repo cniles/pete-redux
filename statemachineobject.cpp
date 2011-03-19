@@ -10,6 +10,10 @@ StateMachineObject::StateMachineObject(GameState* gamestate, btVector3 position,
   changeState(state);
 }
 
+StateMachineObject::~StateMachineObject() {
+  if(current_state) delete current_state;
+}
+
 btVector3 StateMachineObject::getFurthestFacingPointOnPlatform() {
   Level* level = &(gamestate->level);
   int origin_x = position.getX();
@@ -30,14 +34,14 @@ btVector3 StateMachineObject::getFurthestFacingPointOnPlatform() {
 
 void StateMachineObject::changeState(State* new_state) {
   State* temp = current_state;
-  if(current_state != NULL) {
+  if(current_state) {
     current_state->onLeave();
   }
   current_state = new_state;
-  if(current_state != NULL) {
+  if(current_state) {
     current_state->onEnter();
   }
-  if(temp != NULL) {
+  if(temp) {
     delete temp;
   }
 }

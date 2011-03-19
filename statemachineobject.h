@@ -31,6 +31,7 @@ class StateMachineObject : public PhysicsObject {
   btVector3 destination;
  protected:
   StateMachineObject(GameState* gamestate, btVector3 position, Animation* animation, CollisionScheme scheme, State* state);
+  ~StateMachineObject();
   void update(float dt);
  public:
   void changeState(State* new_state);
