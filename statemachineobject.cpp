@@ -6,7 +6,7 @@ State::State(StateMachineObject* owner)
 }
 
 StateMachineObject::StateMachineObject(GameState* gamestate, btVector3 position, Animation* animation, CollisionScheme scheme, State* state) 
-  : PhysicsObject(gamestate, position, animation, scheme), current_state(NULL) {
+  : PhysicsObject(gamestate, position, animation, scheme), current_state(NULL), disable_update(false) {
   changeState(state);
 }
 
@@ -48,7 +48,11 @@ void StateMachineObject::changeState(State* new_state) {
 
 void StateMachineObject::update(float dt) {
   animation_timer.tick(dt*1000.0f);
-  if(current_state != NULL) {
+  if(current_state != NULL && !disable_update) {
     current_state->onUpdate(dt);
   }
+}
+
+void StateMachineObject::stopUpdate() {
+  disable_update = true;
 }

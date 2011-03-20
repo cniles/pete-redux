@@ -23,26 +23,24 @@ void Zombie::StateDying::onLeave() {}
 
 
 void Zombie::StateMoving::onEnter() {
-  btVector3 destination = owner->getFurthestFacingPointOnPlatform();
+  owner->destination = owner->getFurthestFacingPointOnPlatform();
   AI_DEBUG_OUT("Entered ZombieMoveState");
-  if((owner->getPosition() - destination).fuzzyZero()) {
+  if((owner->getPosition() - owner->destination).fuzzyZero()) {
     owner->changeDirection();
-    destination = owner->getFurthestFacingPointOnPlatform();    
-    if((owner->getPosition() - destination).fuzzyZero()) {
+    owner->destination = owner->getFurthestFacingPointOnPlatform();    
+    if((owner->getPosition() - owner->destination).fuzzyZero()) {
       owner->changeDirection();
       owner->changeState(new Zombie::StateIdle(owner));
     }
   }
-  owner->setDestination(destination);    
 }
 void Zombie::StateMoving::onUpdate(float dt) {
   // Check if object is near it's destination & turn it around if so
   const static float in_range_eps = 0.1f;
-  btVector3 destination = owner->getDestination();
   btVector3 current_position = owner->getPosition();
-  if(current_position.distance(destination) <= in_range_eps) {
+  if(current_position.distance(owner->destination) <= in_range_eps) {
     owner->changeDirection();
-    owner->setDestination(owner->getFurthestFacingPointOnPlatform());
+    owner->destination = owner->getFurthestFacingPointOnPlatform();
   }
   if(owner->attack_timer > 0.0) {
     owner->attack_timer -= dt;
