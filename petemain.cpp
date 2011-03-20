@@ -15,12 +15,13 @@
 #include "draw.h"
 
 #include "zombie.h"
+#include "bat.h"
 
 int screen_width = 640;
 int screen_height = 480;
 int screen_bpp = 32;
 
-const char* LEVEL_FILE_NAME = "levels/level1.txt";
+const char* LEVEL_FILE_NAME = "levels/aitest.txt";
 const char* BACKGROUND_IMAGE_FILE_NAME = "gfx/background.png";
 GLuint background;
 
@@ -35,6 +36,7 @@ GLuint loadTexture(const char* file_name) {
 
 void loadStaticAssets() {
   Zombie::loadStaticAssets();
+  Bat::loadStaticAssets();
 }
 
 void initSDL() {

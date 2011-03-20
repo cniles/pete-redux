@@ -29,7 +29,6 @@ class GameObject {
  
   virtual void draw();
   virtual void update(float) = 0;
-  virtual void takeDamage(int damage, int type);
 };
 
 #endif
