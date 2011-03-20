@@ -14,7 +14,6 @@ struct CollisionScheme {
   int collision_flags;
 };
 
-
 class PhysicsObject : public GameObject {
  private:
   bool collision_with_player_detected;
@@ -36,7 +35,8 @@ class PhysicsObject : public GameObject {
 
  public:
   inline btRigidBody* getRigidBody() { return rigid_body; }
-  inline bool notifyCollisionWithPlayer() { collision_with_player_detected = true; }
+  inline void notifyCollisionWithPlayer() { collision_with_player_detected = true; }
+  virtual void notifyWasShot(int damage, int type) {};
   bool collisionWithPlayerDetected();
 };
 

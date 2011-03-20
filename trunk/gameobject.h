@@ -1,15 +1,13 @@
 #ifndef GAMEOBJECT_H_
 #define GAMEOBJECT_H_
 
-#include "debug.h"
-
 #include <btBulletDynamicsCommon.h>
 
-#include "damagetaker.h"
 #include "animation.h"
+#include "debug.h"
 
 class GameState;
-class GameObject : public DamageTaker {
+class GameObject {
  protected:
   GameState* gamestate;
   AnimationTimer animation_timer;

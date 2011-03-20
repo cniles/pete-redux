@@ -1,11 +1,11 @@
 #ifndef GAMESTATE_H_
 #define GAMESTATE_H_
-#include "debug.h"
 #include <vector>
 #include "bullet.h"
 #include "gameobject.h"
 #include "level.h"
 #include "player.h"
+#include "debug.h"
 
 struct GameState {
   Level level;
