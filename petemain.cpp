@@ -17,6 +17,7 @@
 #include "draw.h"
 
 #include "zombie.h"
+#include "soul.h"
 #include "bat.h"
 
 int screen_width = 640;
@@ -39,6 +40,7 @@ GLuint loadTexture(const char* file_name) {
 void loadStaticAssets() {
   Zombie::loadStaticAssets();
   Bat::loadStaticAssets();
+  Soul::loadStaticAssets();
 }
 
 void initSDL() {

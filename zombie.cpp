@@ -5,12 +5,14 @@
 
 Animation Zombie::animation = Animation();
 
+Zombie::Zombie(GameState* gamestate, btVector3 position) 
+  : StateMachineObject(gamestate, position, &animation, default_collision_scheme, new Zombie::StateMoving(this)), health(INITIAL_HEALTH),
+    can_attack(true) {
+}
+
 void Zombie::StateDead::onEnter() {}
 void Zombie::StateDead::onUpdate(float) {}
 void Zombie::StateDead::onLeave() {}
-
-
-
 
 void Zombie::StateDying::onEnter() {}
 void Zombie::StateDying::onUpdate(float dt) {
@@ -19,8 +21,6 @@ void Zombie::StateDying::onUpdate(float dt) {
   }
 }
 void Zombie::StateDying::onLeave() {}
-
-
 
 void Zombie::StateMoving::onEnter() {
   owner->destination = owner->getFurthestFacingPointOnPlatform();
@@ -63,18 +63,9 @@ void Zombie::StateMoving::onUpdate(float dt) {
 }
 void Zombie::StateMoving::onLeave() {}
 
-
-
 void Zombie::StateIdle::onEnter() {}
 void Zombie::StateIdle::onUpdate(float dt) {}
 void Zombie::StateIdle::onLeave() {}
-
-
-
-Zombie::Zombie(GameState* gamestate, btVector3 position) 
-  : StateMachineObject(gamestate, position, &animation, default_collision_scheme, new Zombie::StateMoving(this)), health(INITIAL_HEALTH),
-    can_attack(true) {
-}
 
 void Zombie::notifyWasShot(int damage, int type) {
   if(health > 0) {

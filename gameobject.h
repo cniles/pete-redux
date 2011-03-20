@@ -12,6 +12,8 @@ class GameObject {
   GameState* gamestate;
   AnimationTimer animation_timer;
 
+  bool disable_draw;
+
   btVector3 position;
   int direction;
  public:
@@ -27,6 +29,8 @@ class GameObject {
   inline int getAnimationState() { return animation_timer.getState(); }
   inline AnimationTimer* getAnimationTimer() { return &animation_timer; }
  
+  inline void disableDraw() { disable_draw = true; }
+
   virtual void draw();
   virtual void update(float) = 0;
 };
