@@ -2,6 +2,8 @@
 #include <vector>
 #include <map>
 #include <fstream>
+#include <stdlib.h>
+#include <time.h>
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
@@ -157,6 +159,8 @@ void run() {
   Uint32 elapsed = 0;
   SDL_Event event;
   bool quit = false;
+
+  srand(time(NULL));
 
   GameState gamestate(loadLevel(LEVEL_FILE_NAME));
 

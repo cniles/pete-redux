@@ -9,6 +9,7 @@ class Zombie : public StateMachineObject {
 
   static Animation animation;
 
+  btVector3 destination;
   int health;
   bool can_attack;
   float attack_timer;

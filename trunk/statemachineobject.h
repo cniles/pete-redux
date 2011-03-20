@@ -28,16 +28,15 @@ class State {
 class StateMachineObject : public PhysicsObject {
  private:
   State* current_state;
-  btVector3 destination;
+  bool disable_update;
  protected:
   StateMachineObject(GameState* gamestate, btVector3 position, Animation* animation, CollisionScheme scheme, State* state);
   ~StateMachineObject();
+  void stopUpdate();
   void update(float dt);
  public:
   void changeState(State* new_state);
   btVector3 getFurthestFacingPointOnPlatform();
-  inline btVector3 getDestination() { return destination; }
-  inline void setDestination(btVector3 destination) { this->destination = destination; }
 };
 
 #endif
