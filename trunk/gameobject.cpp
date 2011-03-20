@@ -11,9 +11,6 @@ GameObject::GameObject(GameState* gamestate, btVector3 position, Animation* anim
 }
 
 
-void GameObject::takeDamage(int damage, int type) {
-}
-
 GameObject::~GameObject() {
 }
 

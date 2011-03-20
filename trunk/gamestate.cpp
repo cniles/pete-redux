@@ -1,4 +1,5 @@
 #include "zombie.h"
+#include "bat.h"
 #include "gamestate.h"
 #include <iostream>
 
@@ -19,10 +20,15 @@ GameState::GameState(Level level)
   std::cerr << "Initializing game objects...";
   TokenList::const_iterator token_iter = level.getTokensStart();
   while(token_iter != level.getTokensEnd()) {
+    btVector3 position(token_iter->x + 0.5f, token_iter->y + 0.5f, 0.0f);
     switch(token_iter->id) {
     case 0:
       DEBUG_OUT("New Zombie");
-      objects.push_back(new Zombie(this, btVector3(token_iter->x + 0.5f, token_iter->y + 0.5f, 0.0f)));
+      objects.push_back(new Zombie(this, position));
+      break;
+    case 1:
+      DEBUG_OUT("New Bat");
+      objects.push_back(new Bat(this, position));
       break;
     }
     token_iter++;

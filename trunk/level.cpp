@@ -129,7 +129,7 @@ void Level::draw(int start_col, int end_col) const {
   start_col = min(max(0, length), length);
   end_col = min(max(0, end_col), length);
   for(int i = 0; i < length; i++) {
-    for(int j = 0; j < 9; j++) {
+    for(int j = 0; j < 10; j++) {
       if(tiles[i][j]!=0)
 	drawTile(i, j);
     }
