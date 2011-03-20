@@ -1,5 +1,6 @@
 #include "zombie.h"
 #include "bat.h"
+#include "soul.h"
 #include "gamestate.h"
 #include <iostream>
 
@@ -29,6 +30,10 @@ GameState::GameState(Level level)
     case 1:
       DEBUG_OUT("New Bat");
       objects.push_back(new Bat(this, position));
+      break;
+    case 2:
+      DEBUG_OUT("New Soul");
+      objects.push_back(new Soul(this, position));
       break;
     }
     token_iter++;
