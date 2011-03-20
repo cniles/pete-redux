@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "zombie.h"
+#include "gamestate.h"
 
 Animation Zombie::animation = Animation();
 
@@ -18,8 +19,6 @@ void Zombie::StateDying::onUpdate(float dt) {
   }
 }
 void Zombie::StateDying::onLeave() {}
-
-
 
 
 
@@ -56,6 +55,7 @@ void Zombie::StateMoving::onUpdate(float dt) {
       owner->can_attack = false;
       owner->getAnimationTimer()->playClipOnce(1,0);
       owner->attack_timer = Zombie::ATTACK_COOLDOWN;
+      owner->gamestate->player->takeDamage(1,0);
     }
   }
   // Nudge the object in the correct direction.
@@ -78,7 +78,7 @@ Zombie::Zombie(GameState* gamestate, btVector3 position)
     can_attack(true) {
 }
 
-void Zombie::takeDamage(int damage, int type) {
+void Zombie::notifyWasShot(int damage, int type) {
   if(health > 0) {
     health -= damage;
     if(health <= 0) {

@@ -3,6 +3,7 @@
 #include "gamestate.h"
 #include "player.h"
 #include "draw.h"
+#include "physicsobject.h"
 
 Animation Player::animation = Animation();
 
@@ -198,10 +199,9 @@ ShotgunCallback::ShotgunCallback(int direction) : direction(direction) {}
 btScalar ShotgunCallback::addSingleResult(btCollisionWorld::LocalRayResult& ray_result, bool normal_in_world_space) {
   btVector3 source_vector(direction * 100.0f, 0.0f, 0.0f);
   btRigidBody* body = dynamic_cast<btRigidBody*>(ray_result.m_collisionObject);
-  void* ptr = body->getUserPointer();
-  DamageTaker* target = reinterpret_cast<DamageTaker*>(ptr);
-  if(target!=NULL) {
-    target->takeDamage(1,0);
+  PhysicsObject* target = (PhysicsObject*)body->getUserPointer();
+  if(target) {
+    target->notifyWasShot(1, 0);
   }
   body->applyCentralForce(source_vector);
   return btScalar(0.0f);
@@ -223,6 +223,6 @@ void PlayerMotionState::setWorldTransform(const btTransform& world_transform) {
   player->setPosition(position);
 }
 
-void Player::takeDamage(int,int) {
-  std::cerr << "Player takes damage" << std::endl;
+void Player::takeDamage(int damage, int type) {
+  health -= damage;
 }

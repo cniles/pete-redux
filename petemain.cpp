@@ -13,7 +13,9 @@
 #include "gamestate.h"
 #include "texture.h"
 #include "draw.h"
+
 #include "zombie.h"
+
 int screen_width = 640;
 int screen_height = 480;
 int screen_bpp = 32;

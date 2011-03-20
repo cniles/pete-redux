@@ -70,6 +70,7 @@ GameState::~GameState() {
   }
   for(int i = 0; i < level_bodies.size(); i++) {
     delete level_bodies[i]->getMotionState();
+    dynamics_world->removeRigidBody(level_bodies[i]);
     delete level_bodies[i];
     delete level_shapes[i];
   }

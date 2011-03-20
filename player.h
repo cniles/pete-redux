@@ -13,7 +13,7 @@
 #define SHOOT_PAUSE_TIME 0.75f
 
 class GameState;
-class Player : public DamageTaker {
+class Player {
   btRigidBody* rigid_body;
   btTransform position;
   GameState* gamestate;

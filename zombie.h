@@ -20,7 +20,7 @@ class Zombie : public StateMachineObject {
 
  public:
   Zombie(GameState*, btVector3 position);
-  void takeDamage(int, int);
+  void notifyWasShot(int, int);
   static void loadStaticAssets();
 };
 
