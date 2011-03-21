@@ -34,7 +34,9 @@ KeyStates::KeyStates() {
 
 GLuint loadTexture(const char* file_name) {
   SDL_Surface* surface = IMG_Load(file_name);
-  return getGLTexture(surface);
+  GLuint texture = getGLTexture(surface);
+  delete SDL_FreeSurface(surface);
+  return texture;
 }
 
 void loadStaticAssets() {
