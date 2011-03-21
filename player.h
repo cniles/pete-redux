@@ -60,12 +60,5 @@ class PlayerMotionState : public btMotionState {
   PlayerMotionState(const btTransform& initial_position, Player* player);
 };
 
-class ShotgunCallback : public btCollisionWorld::RayResultCallback {
-    int direction;
-public:
-    ShotgunCallback(int direction);
-    btScalar addSingleResult(btCollisionWorld::LocalRayResult& ray_result, bool normal_in_world_space);
-};
-
 #endif
 
