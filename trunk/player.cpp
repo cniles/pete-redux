@@ -189,22 +189,19 @@ void Player::fireShotgun() {
   for(int i = 0; i < 3; i++) {
     btVector3 bullet_path(direction * 5.0, i*0.5f, 0.0f);
     bullet_path += origin;
-    ShotgunCallback callback(direction);
+    btCollisionWorld::ClosestRayResultCallback callback(origin, bullet_path);
     gamestate->dynamics_world->rayTest(origin, bullet_path, callback);
+    if(callback.hasHit()) {
+      if(callback.m_collisionObject) {
+	PhysicsObject* object = (PhysicsObject*)callback.m_collisionObject->getUserPointer();
+	if(object) {
+	  object->notifyWasShot(1, 0);
+	  btRigidBody* body = btRigidBody::upcast(callback.m_collisionObject);
+	  body->applyCentralForce(btVector3(direction*150, 0.0f, 0.0f));
+	}
+      }
+    }
   }
-}
-
-ShotgunCallback::ShotgunCallback(int direction) : direction(direction) {}
-
-btScalar ShotgunCallback::addSingleResult(btCollisionWorld::LocalRayResult& ray_result, bool normal_in_world_space) {
-  btVector3 source_vector(direction * 100.0f, 0.0f, 0.0f);
-  btRigidBody* body = dynamic_cast<btRigidBody*>(ray_result.m_collisionObject);
-  PhysicsObject* target = (PhysicsObject*)body->getUserPointer();
-  if(target) {
-    target->notifyWasShot(1, 0);
-  }
-  body->applyCentralForce(source_vector);
-  return btScalar(0.0f);
 }
 
 PlayerMotionState::PlayerMotionState(const btTransform& initial_position, Player* player) 
