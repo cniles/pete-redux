@@ -1,4 +1,5 @@
 #summary Collection of screenshots.
 
 [http://pete-redux.googlecode.com/svn/wiki/Screenshot1.png]
+
 Playing around in the test map.
