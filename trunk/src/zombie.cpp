@@ -14,7 +14,12 @@ void Zombie::StateDead::onEnter() {}
 void Zombie::StateDead::onUpdate(float) {}
 void Zombie::StateDead::onLeave() {}
 
-void Zombie::StateDying::onEnter() {}
+void Zombie::StateDying::onEnter() {
+      CollisionScheme scheme = default_collision_scheme;
+      scheme.collision_flags = COL_LEVEL;
+      owner->changeCollisionScheme(scheme);
+      owner->animation_timer.playClipOnce(2, -1);
+}
 void Zombie::StateDying::onUpdate(float dt) {
   if(owner->getAnimationState() == AnimationTimer::STOPPED) {
     owner->changeState(new Zombie::StateDead(owner));
@@ -71,10 +76,6 @@ void Zombie::notifyWasShot(int damage, int type) {
   if(health > 0) {
     health -= damage;
     if(health <= 0) {
-      CollisionScheme scheme = default_collision_scheme;
-      scheme.collision_flags = COL_LEVEL;
-      changeCollisionScheme(scheme);
-      animation_timer.playClipOnce(2, -1);
       changeState(new Zombie::StateDying(this));
     }
   }

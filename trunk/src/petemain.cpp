@@ -19,6 +19,7 @@
 #include "zombie.h"
 #include "soul.h"
 #include "bat.h"
+#include "darkchampion.h"
 
 int screen_width = 640;
 int screen_height = 480;
@@ -43,6 +44,7 @@ void loadStaticAssets() {
   Zombie::loadStaticAssets();
   Bat::loadStaticAssets();
   Soul::loadStaticAssets();
+  DarkChampion::loadStaticAssets();
 }
 
 void initSDL() {
