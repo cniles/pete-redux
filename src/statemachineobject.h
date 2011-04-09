@@ -37,6 +37,7 @@ class StateMachineObject : public PhysicsObject {
  public:
   void changeState(State* new_state);
   btVector3 getFurthestFacingPointOnPlatform();
+  float getDistance2ToPlayer();
 };
 
 #endif

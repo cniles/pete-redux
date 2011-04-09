@@ -2,15 +2,21 @@
 #include "physicsobject.h"
 #include "gamestate.h"
 #include <stdlib.h>
+#include <iostream>
 #include <vector>
 
 void Bat::StateMove::onEnter() {
   owner->timer = 0;
 }
 void Bat::StateMove::onUpdate(float dt) {
+  if(owner->getDistance2ToPlayer() < Bat::DETECT_RANGE) {
+    owner->changeState(new Bat::StateAttack(owner));
+    return;
+  }
   if((owner->destination - owner->position).length() < 0.1f || owner->timer <= 0) {
     owner->destination = owner->getRandomMove();
     btVector3 direction = owner->destination - owner->position;
+
     direction.normalize();
     owner->rigid_body->setLinearVelocity(direction);
     owner->timer = Bat::MOVEMENT_TIMEOUT;
@@ -31,8 +37,24 @@ void Bat::StateDead::onUpdate(float dt) {
 }
 void Bat::StateDead::onLeave() {}
 
-void Bat::StateAttack::onEnter() {}
-void Bat::StateAttack::onUpdate(float dt) {}
+void Bat::StateAttack::onEnter() {
+  owner->timer = 0;
+}
+void Bat::StateAttack::onUpdate(float dt) {
+  if(owner->timer<=0) {
+    btVector3 velocity = owner->gamestate->player->getPosition() - owner->position;
+    if(velocity.length2() > Bat::DETECT_RANGE) {
+      owner->changeState(new Bat::StateMove(owner));
+      return;
+    }
+    else {
+      velocity.normalize();
+      owner->rigid_body->setLinearVelocity(velocity);
+      owner->timer = ATTACK_COOLDOWN;
+    }
+  }
+  owner->timer -= dt;
+}
 void Bat::StateAttack::onLeave() {}
 
 //Bat::State::onLeave() {}

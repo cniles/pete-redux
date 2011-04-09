@@ -19,7 +19,5 @@ DarkChampion::DarkChampion(GameState* gamestate, btVector3 position)
 }
 
 void DarkChampion::loadStaticAssets() {
-  std::cerr << "Loading dark...";
   animation = Animation("gfx/darkchampion");
-  std::cerr << "loaded!" << std::endl;
 }

@@ -61,6 +61,9 @@ void Zombie::StateMoving::onUpdate(float dt) {
       owner->gamestate->player->takeDamage(1,0);
     }
   }
+  if(owner->getDistance2ToPlayer() <= 9.0f) {
+    owner->changeState(new Zombie::StateChase(owner));
+  }
   // Nudge the object in the correct direction.
   btVector3 force(owner->getDirection(), 0.0f, 0.0f);
   force = force * 3;
@@ -71,6 +74,22 @@ void Zombie::StateMoving::onLeave() {}
 void Zombie::StateIdle::onEnter() {}
 void Zombie::StateIdle::onUpdate(float dt) {}
 void Zombie::StateIdle::onLeave() {}
+
+void Zombie::StateChase::onEnter() {
+  owner->timer = 0;
+}
+void Zombie::StateChase::onUpdate(float dt) {
+  if(owner->timer <= 0 || (owner->destination - owner->position).length() < 0.1f) {
+    owner->destination = owner->getChaseDestination();
+    owner->timer = CHASE_COOLDOWN;
+  }
+  btVector3 force = owner->destination - owner->position;
+  force.normalize();
+  force *= 4;
+  owner->getRigidBody()->applyCentralForce(force);
+  owner->timer -= dt;
+}
+void Zombie::StateChase::onLeave() {}
 
 void Zombie::notifyWasShot(int damage, int type) {
   if(health > 0) {
@@ -83,4 +102,29 @@ void Zombie::notifyWasShot(int damage, int type) {
 
 void Zombie::loadStaticAssets() {
   animation = Animation("gfx/zombie");
+}
+
+bool isValidTile(int x, int y, Level& level) {
+  if(level.getTile(x,y)==0 && level.getTile(x, y-1)==0) {
+    return true; 
+  }
+  return false;
+}
+
+btVector3 Zombie::getChaseDestination() {
+  int x = position.getX();
+  int y = position.getY();
+  
+  if(isValidTile(x+direction, y, gamestate->level)) {
+    x += direction;
+  }
+  else if(isValidTile(x+direction, y-1, gamestate->level)) {
+    x += direction;
+    y -= 1;
+  }
+  else if(isValidTile(x+direction, y+1, gamestate->level)) {
+    x += direction;
+    y += 1;
+  }
+  return btVector3(x, y, 0.0f);
 }

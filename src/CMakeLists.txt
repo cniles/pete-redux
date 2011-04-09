@@ -9,3 +9,6 @@ add_library(BaseCode animation.cpp gameobject.cpp physicsobject.cpp
 
 add_library(ClientCode player.cpp zombie.cpp bat.cpp soul.cpp darkchampion.cpp)
 target_link_libraries(ClientCode BaseCode)
+
+add_executable(../pete petemain.cpp)
+target_link_libraries(../pete ${EXTRA_LIBS})
