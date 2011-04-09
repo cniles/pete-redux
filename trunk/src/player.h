@@ -45,6 +45,7 @@ class Player {
   void draw() const;
   void takeDamage(int,int);
   inline void setPosition(const btTransform& position) { this->position = position; }
+  inline btVector3 getPosition() { return this->position.getOrigin(); }
   void update(Uint32 dt, const KeyStates& key_states);
   void operator=(const Player& other);
 };

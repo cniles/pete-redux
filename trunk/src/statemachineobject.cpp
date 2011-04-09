@@ -56,3 +56,7 @@ void StateMachineObject::update(float dt) {
 void StateMachineObject::stopUpdate() {
   disable_update = true;
 }
+
+float StateMachineObject::getDistance2ToPlayer() {
+  return position.distance2(gamestate->player->getPosition());
+}

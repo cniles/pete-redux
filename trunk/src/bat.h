@@ -9,6 +9,7 @@ class Bat : public StateMachineObject {
   const static float MASS = 1.0f;
   const static float ATTACK_COOLDOWN = 0.5f;
   const static float GRAVITY = 0.0f;
+  const static float DETECT_RANGE = 9.0f; // 3.0f*3.0f;
   const static int MOVEMENT_TIMEOUT = 3.0f;
   
   static CollisionScheme collision_scheme;
