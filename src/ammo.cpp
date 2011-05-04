@@ -27,7 +27,7 @@ void Ammo::draw() {
   glPushMatrix();
   glTranslatef(position.getX(),position.getY(),-0.5f);
   glTranslatef(-0.5f, -0.5f, 0.0f);
-  glBindTexture(GL_TEXTURE_2D, animation_timer.getFrame());
+  glBindTexture(GL_TEXTURE_2D, animation.getFrame(0, 0));
   drawCube();
   glPopMatrix();
 }
