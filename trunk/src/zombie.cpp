@@ -10,7 +10,7 @@ Zombie::Zombie(GameState* gamestate, btVector3 position)
     can_attack(true) {
 }
 
-void Zombie::StateDead::onEnter() {}
+void Zombie::StateDead::onEnter() {std::cerr << "Zombie died" << std::endl;}
 void Zombie::StateDead::onUpdate(float) {}
 void Zombie::StateDead::onLeave() {}
 
@@ -61,9 +61,9 @@ void Zombie::StateMoving::onUpdate(float dt) {
       owner->gamestate->player->takeDamage(1,0);
     }
   }
-  if(owner->getDistance2ToPlayer() <= 9.0f) {
+  /*  if(owner->getDistance2ToPlayer() <= 9.0f) {
     owner->changeState(new Zombie::StateChase(owner));
-  }
+    }*/
   // Nudge the object in the correct direction.
   btVector3 force(owner->getDirection(), 0.0f, 0.0f);
   force = force * 3;
