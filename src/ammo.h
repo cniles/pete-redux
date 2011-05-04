@@ -5,6 +5,8 @@
 
 class Ammo : public PhysicsObject {
   const static int AMMO_REWARD = 8;
+  const static int rotation_speed = 180; // degrees/sec
+  int rotation;
   static Animation animation;
 
  public:

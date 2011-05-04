@@ -198,7 +198,9 @@ void Player::fireShotgun() {
 	if(object) {
 	  object->notifyWasShot(1, 0);
 	  btRigidBody* body = btRigidBody::upcast(callback.m_collisionObject);
-	  body->applyCentralForce(btVector3(direction*150, 0.0f, 0.0f));
+	  if(body) {
+	    body->applyCentralForce(btVector3(direction*150, 0.0f, 0.0f));
+	  }
 	}
       }
     }
