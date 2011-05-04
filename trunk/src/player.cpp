@@ -27,6 +27,7 @@ Player::Player(int tile_x, int tile_y, GameState* gamestate) {
   ctrl_released = true;
 
   position = btTransform(btQuaternion(0,0,0,1), btVector3(tile_x+0.5f, tile_y+0.5f, 0));
+  ammo = 12;
   direction = 1;
   btMotionState* motion_state = 
     new PlayerMotionState(position, this);
@@ -222,4 +223,8 @@ void PlayerMotionState::setWorldTransform(const btTransform& world_transform) {
 
 void Player::takeDamage(int damage, int type) {
   health -= damage;
+}
+
+void Player::increaseAmmo(int amount) {
+  ammo += amount;
 }

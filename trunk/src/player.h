@@ -23,6 +23,7 @@ class Player {
   float shoot_timer;
   int direction;
   int health;
+  int ammo;
   
   bool space_held;
   bool on_ground;
@@ -43,6 +44,7 @@ class Player {
   float getX();
   float getY();
   void draw() const;
+  void increaseAmmo(int);
   void takeDamage(int,int);
   inline void setPosition(const btTransform& position) { this->position = position; }
   inline btVector3 getPosition() { return this->position.getOrigin(); }

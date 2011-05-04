@@ -1,11 +1,9 @@
-#include "zombie.h"
-#include "darkchampion.h"
-#include "bat.h"
-#include "soul.h"
-#include "gamestate.h"
 #include <iostream>
 
 #include <BulletCollision/CollisionShapes/btBox2dShape.h>
+
+#include "gamestate.h"
+#include "objecttypes.h"
 
 GameState::GameState(Level level)
   : level(level) {
@@ -39,6 +37,10 @@ GameState::GameState(Level level)
     case 3:
       DEBUG_OUT("New Soul");
       objects.push_back(new DarkChampion(this, position));
+      break;
+    case 99:
+      DEBUG_OUT("New Ammo");
+      objects.push_back(new Ammo(this, position));
       break;
     }
     token_iter++;
