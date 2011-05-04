@@ -12,6 +12,7 @@ GameObject::GameObject(GameState* gamestate, btVector3 position, Animation* anim
 
 
 GameObject::~GameObject() {
+
 }
 
 void GameObject::draw() {

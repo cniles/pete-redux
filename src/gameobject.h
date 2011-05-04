@@ -18,7 +18,7 @@ class GameObject {
   int direction;
  public:
   GameObject(GameState* gamestate, btVector3 position, Animation* animation);
-  ~GameObject();
+  virtual ~GameObject();
 
   inline btVector3 getPosition() {return position;}
   inline void setPosition(const btVector3& new_position) { position = new_position; }
