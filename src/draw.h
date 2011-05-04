@@ -21,4 +21,35 @@ inline void drawQuadFlip() {
   glEnd();
 }
 
+inline void drawCube() {
+  glPushMatrix();
+  glTranslatef(0.0f, 0.0f, 0.5f);
+  drawQuad(); 
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0.0f, 0.0f, 0.5f);
+  glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+  drawQuadFlip();
+  glPopMatrix();
+  
+  glPushMatrix();
+  glTranslatef(1.0f, 0.0f, 0.5f);
+  glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+  drawQuad();
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0.0f, 1.0f, 0.5f);
+  glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+  drawQuad();
+  glPopMatrix();
+
+  /*glPushMatrix();
+  glRotatef(-90.0f, 1.0f, 1.0f, 0.0f);
+  glTranslatef(0.0f, 0.0f, 0.5f);
+  drawQuad();
+  glPopMatrix();*/
+}
+
 #endif

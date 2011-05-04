@@ -4,10 +4,11 @@
 #)
 
 add_library(BaseCode animation.cpp gameobject.cpp physicsobject.cpp
-		       statemachineobject.cpp bullet.cpp gamestate.cpp 
-		       level.cpp texture.cpp tileset.cpp)
+		     statemachineobject.cpp bullet.cpp gamestate.cpp 
+		     level.cpp texture.cpp tileset.cpp)
 
-add_library(ClientCode player.cpp zombie.cpp bat.cpp soul.cpp darkchampion.cpp)
+add_library(ClientCode player.cpp zombie.cpp bat.cpp soul.cpp darkchampion.cpp
+ 		       ammo.cpp)
 target_link_libraries(ClientCode BaseCode)
 
 add_executable(../pete petemain.cpp)

@@ -16,10 +16,7 @@
 #include "texture.h"
 #include "draw.h"
 
-#include "zombie.h"
-#include "soul.h"
-#include "bat.h"
-#include "darkchampion.h"
+#include "objecttypes.h"
 
 int screen_width = 640;
 int screen_height = 480;
@@ -45,6 +42,7 @@ void loadStaticAssets() {
   Bat::loadStaticAssets();
   Soul::loadStaticAssets();
   DarkChampion::loadStaticAssets();
+  Ammo::loadStaticAssets();
 }
 
 void initSDL() {
