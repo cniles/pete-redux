@@ -1,11 +1,15 @@
 #include "draw.h"
 #include "ammo.h"
+
 #include "gamestate.h"
 
-Animation Ammo::animation;
+Animation Ammo::animation = Animation();
 
 Ammo::Ammo(GameState* gamestate, btVector3 position) 
-  : PhysicsObject(gamestate, position, &animation, default_collision_scheme) {
+  : PhysicsObject(gamestate, position, &animation, default_collision_scheme), rotation(0) {
+}
+
+Ammo::~Ammo () {
 }
 
 void Ammo::loadStaticAssets() {
