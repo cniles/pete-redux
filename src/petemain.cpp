@@ -15,6 +15,7 @@
 #include "gamestate.h"
 #include "texture.h"
 #include "draw.h"
+#include "flipnumber.h"
 
 #include "objecttypes.h"
 
@@ -44,6 +45,8 @@ void loadStaticAssets() {
   DarkChampion::loadStaticAssets();
   Ammo::loadStaticAssets();
   Medpack::loadStaticAssets();
+
+  FlipNumber::loadStaticAssets();
 }
 
 void initSDL() {
@@ -52,11 +55,26 @@ void initSDL() {
   SDL_SetVideoMode(screen_width, screen_height, screen_bpp, SDL_OPENGL);
 }
 
+void reshapePerspective() {
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective(45.0f, (float)screen_width/(float)screen_height, 1, 30);
+  glMatrixMode(GL_MODELVIEW);
+}
+
+void reshapeOrthogonal() {
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0, screen_width, 0, screen_height, -1, 1);
+  glMatrixMode(GL_MODELVIEW);
+}
+
 void initGL() {
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(45.0f, (float)screen_width/(float)screen_height, 1, 30);
+
   glMatrixMode(GL_MODELVIEW);
   glEnable(GL_DEPTH_TEST);
   glDisable(GL_CULL_FACE);
@@ -102,6 +120,7 @@ inline void drawBackground() {
 
 void draw(const GameState& gamestate) {  
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+  reshapePerspective();
   glLoadIdentity();
 
   drawBackground();
@@ -127,6 +146,12 @@ void draw(const GameState& gamestate) {
   glPopMatrix();
   glDisable(GL_BLEND);
   glDisable(GL_ALPHA_TEST);
+
+  reshapeOrthogonal();
+  
+  FlipNumber number(0, 100, 69, 2);
+  number.draw();
+
   SDL_GL_SwapBuffers();
 }
 
@@ -201,7 +226,6 @@ void run() {
       (*object_iter)->update(dtf);
       object_iter++;
     }
-
     draw(gamestate);
   }
 }
