@@ -43,6 +43,7 @@ void loadStaticAssets() {
   Soul::loadStaticAssets();
   DarkChampion::loadStaticAssets();
   Ammo::loadStaticAssets();
+  Medpack::loadStaticAssets();
 }
 
 void initSDL() {
@@ -79,7 +80,7 @@ void handleKeys(SDL_Event& event, KeyStates& key_states) {
   }
   if(event.key.keysym.sym == SDLK_RIGHT) {
     key_states.right_held = set_value;
-  }  
+  }
   if(event.key.keysym.sym == SDLK_SPACE) {
     key_states.space_held = set_value;
   }

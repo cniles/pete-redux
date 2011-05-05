@@ -38,6 +38,10 @@ GameState::GameState(Level level)
       DEBUG_OUT("New Soul");
       objects.push_back(new DarkChampion(this, position));
       break;
+    case 98:
+      DEBUG_OUT("New medpack");
+      objects.push_back(new Medpack(this, position));
+      break;
     case 99:
       DEBUG_OUT("New Ammo");
       objects.push_back(new Ammo(this, position));

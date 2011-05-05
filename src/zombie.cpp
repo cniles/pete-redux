@@ -10,7 +10,7 @@ Zombie::Zombie(GameState* gamestate, btVector3 position)
     can_attack(true) {
 }
 
-void Zombie::StateDead::onEnter() {std::cerr << "Zombie died" << std::endl;}
+void Zombie::StateDead::onEnter() {}
 void Zombie::StateDead::onUpdate(float) {}
 void Zombie::StateDead::onLeave() {}
 

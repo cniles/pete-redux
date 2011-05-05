@@ -5,6 +5,7 @@
 #include "soul.h"
 #include "bat.h"
 #include "darkchampion.h"
+#include "medpack.h"
 #include "ammo.h"
 
 #endif
