@@ -13,17 +13,17 @@ Animation::Animation() {
 }
 
 void Animation::parseClip(int index, Clip& clip, SDL_Surface* source) {
-  SDL_Surface* sub_image = SDL_CreateRGBSurface(0, frame_size, frame_size, 32, RMASK, GMASK, BMASK, AMASK);
-  int x = index * frame_size;
+  SDL_Surface* sub_image = SDL_CreateRGBSurface(0, frame_width, frame_height, 32, RMASK, GMASK, BMASK, AMASK);
+  int x = index * frame_width;
 
   SDL_SetAlpha(source, 0, 0);
   SDL_SetAlpha(sub_image, 0, 0);
  
-  SDL_Rect src_rect = {x, 0, frame_size, frame_size};
-  SDL_Rect dst_rect = {0, 0, frame_size, frame_size };
+  SDL_Rect src_rect = {x, 0, frame_width, frame_height};
+  SDL_Rect dst_rect = {0, 0, frame_width, frame_height };
   for(int i = 0; i < clip.frame_count; i++) {
     SDL_BlitSurface(source, &src_rect, sub_image, &dst_rect);
-    src_rect.y += frame_size;
+    src_rect.y += frame_height;
     clip.frames.push_back(getGLTexture(sub_image));
     SDL_FillRect(sub_image, &dst_rect, SDL_MapRGBA(sub_image->format, 0, 0, 0, 0));
   }
@@ -34,7 +34,8 @@ Animation::Animation(const char* fname) {
   std::fstream ifile(fname, std::fstream::in);
   char image_fname[80];
   ifile.getline(image_fname,80);
-  ifile >> frame_size;
+  ifile >> frame_width >> frame_height;
+  
   int frame_count;
   int frame_duration;
   while((ifile >> frame_count).good()) {
