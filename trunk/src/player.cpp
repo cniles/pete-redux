@@ -230,3 +230,7 @@ void Player::takeDamage(int damage, int type) {
 void Player::increaseAmmo(int amount) {
   ammo += amount;
 }
+
+void Player::increaseHealth(int amount) {
+  health += amount;
+}
