@@ -149,8 +149,11 @@ void draw(const GameState& gamestate) {
 
   reshapeOrthogonal();
   
-  FlipNumber number(0, 100, 69, 2);
-  number.draw();
+  FlipNumber health(60, 60, gamestate.player->getHealth(), 2);
+  FlipNumber ammo(60, 100, gamestate.player->getAmmo(), 2);
+  health.draw();
+  ammo.draw();
+  
 
   SDL_GL_SwapBuffers();
 }

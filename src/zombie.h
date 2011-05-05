@@ -5,6 +5,7 @@
 
 class Zombie : public StateMachineObject {
   const static int INITIAL_HEALTH = 3;
+  const static int ZOMBIE_DAMAGE = 5;
   const static float ATTACK_COOLDOWN = 0.5f;
   const static float MOVE_EPS = 0.1f;
   const static float CHASE_COOLDOWN = 0.25f;
