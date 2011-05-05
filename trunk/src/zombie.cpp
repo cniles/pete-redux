@@ -58,7 +58,7 @@ void Zombie::StateMoving::onUpdate(float dt) {
       owner->can_attack = false;
       owner->getAnimationTimer()->playClipOnce(1,0);
       owner->attack_timer = Zombie::ATTACK_COOLDOWN;
-      owner->gamestate->player->takeDamage(1,0);
+      owner->gamestate->player->takeDamage(ZOMBIE_DAMAGE,0);
     }
   }
   /*  if(owner->getDistance2ToPlayer() <= 9.0f) {

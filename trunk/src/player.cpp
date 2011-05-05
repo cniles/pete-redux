@@ -27,6 +27,7 @@ Player::Player(int tile_x, int tile_y, GameState* gamestate) {
   ctrl_released = true;
 
   position = btTransform(btQuaternion(0,0,0,1), btVector3(tile_x+0.5f, tile_y+0.5f, 0));
+  health = 99;
   ammo = 12;
   direction = 1;
   btMotionState* motion_state = 
@@ -98,7 +99,8 @@ void Player::handleKeyStates(const KeyStates& key_states) {
   }
 
   if(key_states.ctrl_held) {
-    if(can_shoot) {
+    if(can_shoot && ammo > 0) {
+      ammo--;
       fireShotgun();
       can_shoot = false;
       shoot_timer = SHOOT_PAUSE_TIME;

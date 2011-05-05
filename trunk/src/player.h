@@ -47,6 +47,8 @@ class Player {
   void increaseAmmo(int);
   void takeDamage(int,int);
   void increaseHealth(int);
+  int getHealth() { return health; }
+  int getAmmo() { return ammo; }
   inline void setPosition(const btTransform& position) { this->position = position; }
   inline btVector3 getPosition() { return this->position.getOrigin(); }
   void update(Uint32 dt, const KeyStates& key_states);
