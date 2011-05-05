@@ -16,7 +16,8 @@ class Clip {
 
 class Animation {
   std::vector<Clip> clips;
-  int frame_size;
+  int frame_width;
+  int frame_height;
   void parseClip(int index, Clip& clip, SDL_Surface* source);
 public:
   Animation();
