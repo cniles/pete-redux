@@ -82,7 +82,7 @@ GameState::GameState(Level level)
       }
     }
   }
-  std::cerr << "Successfully initializinged level physics." << std::endl;
+  std::cerr << "Successfully initialized level physics." << std::endl;
 }
 
 GameState::~GameState() {

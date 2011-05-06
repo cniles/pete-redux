@@ -7,7 +7,7 @@
 
 Animation Player::animation = Animation();
 
-btCapsuleShape Player::child_collision_shape(0.25, 0.4);
+btCapsuleShape Player::child_collision_shape(PLAYER_COLLISION_WIDTH, PLAYER_COLLISION_HEIGHT);
 btConvex2dShape Player::collision_shape(&Player::child_collision_shape);
 
 Player::Player(int tile_x, int tile_y, GameState* gamestate) {
@@ -21,14 +21,14 @@ Player::Player(int tile_x, int tile_y, GameState* gamestate) {
   shoot_timer = 0.0f;
 
   flip_sprite = false;
-  space_held = false;
+  jumping = false;
   on_ground = false;
   can_shoot = true;
   ctrl_released = true;
 
   position = btTransform(btQuaternion(0,0,0,1), btVector3(tile_x+0.5f, tile_y+0.5f, 0));
-  health = 99;
-  ammo = 12;
+  health = PLAYER_INITIAL_HEALTH;
+  ammo = PLAYER_INITIAL_AMMO;
   direction = 1;
   btMotionState* motion_state = 
     new PlayerMotionState(position, this);
@@ -68,6 +68,12 @@ void Player::draw() const {
   glPopMatrix();
 }
 
+void Player::applyJumpVelocity() {
+  btVector3 velocity = rigid_body->getLinearVelocity();
+  velocity.setY(PLAYER_JUMP_VELOCITY);
+  rigid_body->setLinearVelocity(velocity);
+}
+
 void Player::handleKeyStates(const KeyStates& key_states) {
   float x_acceleration = isOnGround()? PLAYER_ACCELERATION : PLAYER_IN_AIR_ACCELERATION;
   if(key_states.right_held) {
@@ -81,22 +87,26 @@ void Player::handleKeyStates(const KeyStates& key_states) {
     rigid_body->applyCentralForce(btVector3(-x_acceleration, 0.0f, 0.0f));
   }
 
-  if(key_states.space_held && !space_held) {
+
+  if(key_states.space_held && !jumping) {
     if(isOnGround()) {
-      space_held = true;
-      jump_timer = JUMP_KEY_HELD_TIME;
+      jumping = true;
+      jump_timer = 0;
     }
   }
   
-  if(key_states.space_held && space_held && jump_timer > 0) {    
-      btVector3 velocity = rigid_body->getLinearVelocity();
-      if(velocity.getY() < MAX_JUMP_VELOCITY) { // prevent slowdown from jumping
-	velocity.setY((JUMP_KEY_HELD_TIME - jump_timer) / JUMP_KEY_HELD_TIME * MAX_JUMP_VELOCITY);
-	rigid_body->setLinearVelocity(velocity);
+  if(jumping) {
+    if(key_states.space_held) {
+      if(jump_timer < PLAYER_JUMP_MAX_TIME) {
+	applyJumpVelocity();
       }
-  }
-  else if(key_states.space_held == false){
-    space_held = false;
+    }
+    else if(jump_timer < PLAYER_JUMP_MIN_TIME) {
+      applyJumpVelocity();
+    }
+    else {
+      jumping = false;
+    }
   }
 
   if(key_states.ctrl_held) {
@@ -104,7 +114,7 @@ void Player::handleKeyStates(const KeyStates& key_states) {
       ammo--;
       fireShotgun();
       can_shoot = false;
-      shoot_timer = SHOOT_PAUSE_TIME;
+      shoot_timer = PLAYER_SHOOT_PAUSE_TIME;
     }
   }
   else {
@@ -126,10 +136,10 @@ void Player::update(Uint32 dt, const KeyStates& key_states) {
     }
   }
 
-  if(jump_timer > 0) {
-    jump_timer -= dtf;
-    if(jump_timer <= 0.0f) {
-      jump_timer = 0.0f;
+  if(jumping) {
+    jump_timer += dtf;
+    if(jump_timer >= PLAYER_JUMP_MAX_TIME) {
+      jumping = false;
     }
   }
 
@@ -152,7 +162,7 @@ float Player::getY() {
 
 }
 
-void Player::calcIsOnGround() {
+void Player::calcIsOnGround() { // REDO THIS CRAP TO DO A SIMPLE RAYTRACE
   on_ground = false;
   btDispatcher* dispatcher = gamestate->dynamics_world->getDispatcher();
   int num_manifolds = dispatcher->getNumManifolds();
@@ -209,7 +219,7 @@ void Player::fireShotgun() {
 	  object->notifyWasShot(1, 0);
 	  btRigidBody* body = btRigidBody::upcast(callback.m_collisionObject);
 	  if(body) {
-	    body->applyCentralForce(btVector3(direction*150, 0.0f, 0.0f));
+	    body->applyCentralForce(btVector3(direction*PLAYER_SHOTGUN_FORCE, 0.0f, 0.0f));
 	  }
 	}
       }
