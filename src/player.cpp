@@ -68,9 +68,6 @@ void Player::draw() const {
   glPopMatrix();
 }
 
-#define PLAYER_JUMP_VELOCITY 7.0
-#define PLAYER_ACCELERATION 10
-#define PLAYER_IN_AIR_ACCELERATION 3
 void Player::handleKeyStates(const KeyStates& key_states) {
   float x_acceleration = isOnGround()? PLAYER_ACCELERATION : PLAYER_IN_AIR_ACCELERATION;
   if(key_states.right_held) {
@@ -87,12 +84,16 @@ void Player::handleKeyStates(const KeyStates& key_states) {
   if(key_states.space_held && !space_held) {
     if(isOnGround()) {
       space_held = true;
+      jump_timer = JUMP_KEY_HELD_TIME;
+    }
+  }
+  
+  if(key_states.space_held && space_held && jump_timer > 0) {    
       btVector3 velocity = rigid_body->getLinearVelocity();
-      if(velocity.getY() < PLAYER_JUMP_VELOCITY) { // prevent slowdown from jumping
-	velocity.setY(PLAYER_JUMP_VELOCITY);
+      if(velocity.getY() < MAX_JUMP_VELOCITY) { // prevent slowdown from jumping
+	velocity.setY((JUMP_KEY_HELD_TIME - jump_timer) / JUMP_KEY_HELD_TIME * MAX_JUMP_VELOCITY);
 	rigid_body->setLinearVelocity(velocity);
       }
-    }
   }
   else if(key_states.space_held == false){
     space_held = false;
@@ -122,6 +123,13 @@ void Player::update(Uint32 dt, const KeyStates& key_states) {
     shoot_timer -= dtf;
     if(shoot_timer <= 0) {
       can_shoot = true;
+    }
+  }
+
+  if(jump_timer > 0) {
+    jump_timer -= dtf;
+    if(jump_timer <= 0.0f) {
+      jump_timer = 0.0f;
     }
   }
 

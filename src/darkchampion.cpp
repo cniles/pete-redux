@@ -15,7 +15,7 @@ void DarkChampion::StateDead::onLeave() {}
 
 DarkChampion::DarkChampion(GameState* gamestate, btVector3 position) 
   : StateMachineObject(gamestate, position, &animation, PhysicsObject::default_collision_scheme, new DarkChampion::StateIdle(this)) {
-  animation_timer.setClip(2);
+  animation_timer.setClip(0);
 }
 
 void DarkChampion::loadStaticAssets() {
