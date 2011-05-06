@@ -7,12 +7,21 @@
 #include <BulletCollision/CollisionShapes/btConvex2dShape.h>
 #include "bullet.h"
 
-#define PLAYER_TOP_X_SPEED 5.0f
+#define PLAYER_INITIAL_HEALTH 99
+#define PLAYER_INITIAL_AMMO 12
+
+#define PLAYER_COLLISION_WIDTH 0.25f
+#define PLAYER_COLLISION_HEIGHT 0.4f
+
 #define PLAYER_ACCELERATION 10
 #define PLAYER_IN_AIR_ACCELERATION 3
-#define MAX_JUMP_VELOCITY 7.0f
-#define JUMP_KEY_HELD_TIME 0.15f
-#define SHOOT_PAUSE_TIME 0.75f
+
+#define PLAYER_JUMP_VELOCITY 4.8f
+#define PLAYER_JUMP_MAX_TIME 0.4f
+#define PLAYER_JUMP_MIN_TIME 0.025f
+
+#define PLAYER_SHOOT_PAUSE_TIME 0.75f
+#define PLAYER_SHOTGUN_FORCE 150.0f
 
 class GameState;
 class Player {
@@ -28,7 +37,7 @@ class Player {
   int health;
   int ammo;
   
-  bool space_held;
+  bool jumping;
   bool on_ground;
   bool can_shoot;
   bool ctrl_released;
@@ -37,6 +46,7 @@ class Player {
   void handleKeyStates(const KeyStates&);
   void calcIsOnGround();
   void fireShotgun();
+  void applyJumpVelocity();
  public:
   static btCapsuleShape child_collision_shape;
   static btConvex2dShape collision_shape;

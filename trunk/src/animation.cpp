@@ -34,7 +34,10 @@ Animation::Animation(const char* fname) {
   std::fstream ifile(fname, std::fstream::in);
   char image_fname[80];
   ifile.getline(image_fname,80);
-  ifile >> frame_width >> frame_height;
+
+  if((ifile >> frame_width >> frame_height).bad()) {
+    std::cerr << "Error loading " << fname << ": file terminated early." << std::endl;
+  }
   
   int frame_count;
   int frame_duration;
@@ -49,6 +52,10 @@ Animation::Animation(const char* fname) {
   }
   SDL_FreeSurface(surface);
   ifile.close();
+
+  if(clips.size() == 0) {
+    std::cerr << "Error loading " << fname << ": empty clip information." << std::cerr;
+  }
 }
 
 void AnimationTimer::advanceFrame() {
