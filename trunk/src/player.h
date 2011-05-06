@@ -8,8 +8,10 @@
 #include "bullet.h"
 
 #define PLAYER_TOP_X_SPEED 5.0f
-#define PLAYER_X_ACCELERATION 7.5f
-#define PLAYER_X_DECELERATION 12.0f
+#define PLAYER_ACCELERATION 10
+#define PLAYER_IN_AIR_ACCELERATION 3
+#define MAX_JUMP_VELOCITY 7.0f
+#define JUMP_KEY_HELD_TIME 0.15f
 #define SHOOT_PAUSE_TIME 0.75f
 
 class GameState;
@@ -21,6 +23,7 @@ class Player {
   static Animation animation;
   AnimationTimer animation_timer;
   float shoot_timer;
+  float jump_timer;
   int direction;
   int health;
   int ammo;
