@@ -23,6 +23,7 @@ Player::Player(int tile_x, int tile_y, GameState* gamestate) {
   flip_sprite = false;
   jumping = false;
   on_ground = false;
+  hit_head = false;
   can_shoot = true;
   ctrl_released = true;
 
@@ -87,7 +88,6 @@ void Player::handleKeyStates(const KeyStates& key_states) {
     rigid_body->applyCentralForce(btVector3(-x_acceleration, 0.0f, 0.0f));
   }
 
-
   if(key_states.space_held && !jumping) {
     if(isOnGround()) {
       jumping = true;
@@ -95,20 +95,6 @@ void Player::handleKeyStates(const KeyStates& key_states) {
     }
   }
   
-  if(jumping) {
-    if(key_states.space_held) {
-      if(jump_timer < PLAYER_JUMP_MAX_TIME) {
-	applyJumpVelocity();
-      }
-    }
-    else if(jump_timer < PLAYER_JUMP_MIN_TIME) {
-      applyJumpVelocity();
-    }
-    else {
-      jumping = false;
-    }
-  }
-
   if(key_states.ctrl_held) {
     if(can_shoot && ammo > 0) {
       ammo--;
@@ -125,6 +111,7 @@ void Player::handleKeyStates(const KeyStates& key_states) {
 
 void Player::update(Uint32 dt, const KeyStates& key_states) {
   calcIsOnGround();
+  calcHitHead();
   handleKeyStates(key_states);
   animation_timer.tick(dt);
 
@@ -135,8 +122,24 @@ void Player::update(Uint32 dt, const KeyStates& key_states) {
       can_shoot = true;
     }
   }
+ 
+  if(hasHitHead()) {
+    jumping = false;
+  }
 
   if(jumping) {
+    if(key_states.space_held) {
+      if(jump_timer < PLAYER_JUMP_MAX_TIME) {
+	applyJumpVelocity();
+      }
+    }
+    else if(jump_timer < PLAYER_JUMP_MIN_TIME) {
+      applyJumpVelocity();
+    }
+    else {
+      jumping = false;
+    }
+
     jump_timer += dtf;
     if(jump_timer >= PLAYER_JUMP_MAX_TIME) {
       jumping = false;
@@ -162,46 +165,50 @@ float Player::getY() {
 
 }
 
-void Player::calcIsOnGround() { // REDO THIS CRAP TO DO A SIMPLE RAYTRACE
-  on_ground = false;
-  btDispatcher* dispatcher = gamestate->dynamics_world->getDispatcher();
-  int num_manifolds = dispatcher->getNumManifolds();
-  for(int i = 0; i < num_manifolds; i++) {
-    btPersistentManifold* contact_manifold = dispatcher->getManifoldByIndexInternal(i);
-    btCollisionObject* obj_a = static_cast<btCollisionObject*>(contact_manifold->getBody0());
-    btCollisionObject* obj_b = static_cast<btCollisionObject*>(contact_manifold->getBody1());
-    if(obj_a->getUserPointer() == (void*)this || obj_b->getUserPointer() == (void*)this) {
-      int num_contacts = contact_manifold->getNumContacts();
-      if(num_contacts) {
-	btVector3 average_a(0.0f, 0.0f, 0.0f);
-	btVector3 average_b(0.0f, 0.0f, 0.0f);
-	for(int j = 0; j < num_contacts; j++) {
-	btManifoldPoint& pt = contact_manifold->getContactPoint(j);
-	average_a += pt.getPositionWorldOnA();
-	average_b += pt.getPositionWorldOnB();
+void Player::calcHitHead() {
+  hit_head = false;
+  btVector3 origin = position.getOrigin(); 
+  for(int i = -1; i <= 1; i++) {
+    btVector3 leg(0.1 * i, (PLAYER_COLLISION_HEIGHT) , 0.0f);
+    leg += origin;
+    btCollisionWorld::ClosestRayResultCallback callback(origin, leg);
+    gamestate->dynamics_world->rayTest(origin, leg, callback);
+    if(callback.hasHit()) {
+      if(callback.m_collisionObject) {
+	if(callback.m_collisionObject->getUserPointer() != this) {
+	  hit_head = true;
+	  return;
 	}
-	
-	float final_x = ((average_a.getX() + average_b.getX())/num_contacts) * 0.5f;
-	float final_y = ((average_a.getY() + average_b.getY())/num_contacts) * 0.5f;
-	float final_z = ((average_a.getZ() + average_b.getZ())/num_contacts) * 0.5f;
-	
-	contact_manifold->clearManifold();
-	
-	btTransform trans;
-	rigid_body->getMotionState()->getWorldTransform(trans);
-	float body_y = trans.getOrigin().getY();
-	float body_x_rel = final_x - trans.getOrigin().getX();
-	if(final_y < body_y && body_x_rel < 0.2f && body_x_rel > -0.2f) {
+      }
+    }
+  }
+}
+
+void Player::calcIsOnGround() {
+  on_ground = false;
+  btVector3 origin = position.getOrigin(); 
+  for(int i = -1; i <= 1; i++) {
+    btVector3 leg(0.1 * i, (-PLAYER_COLLISION_HEIGHT * (1 + PLAYER_ON_GROUND_TOLERANCE)) , 0.0f);
+    leg += origin;
+    btCollisionWorld::ClosestRayResultCallback callback(origin, leg);
+    gamestate->dynamics_world->rayTest(origin, leg, callback);
+    if(callback.hasHit()) {
+      if(callback.m_collisionObject) {
+	if(callback.m_collisionObject->getUserPointer() != this) {
 	  on_ground = true;
 	  return;
 	}
       }
     }
-  }  
+  }
 }
 
 bool Player::isOnGround() {
   return on_ground;
+}
+
+bool Player::hasHitHead() {
+  return hit_head;
 }
 
 void Player::fireShotgun() {

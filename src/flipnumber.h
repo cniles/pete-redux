@@ -4,7 +4,7 @@
 #include "animation.h"
 
 struct FlipNumber {
-  int value;
+  unsigned int value;
   int digits;
 
   float x;
@@ -12,7 +12,7 @@ struct FlipNumber {
 
   static Animation animation;
 
-  FlipNumber(float, float, int, int);
+  FlipNumber(float, float, unsigned int, int);
   void draw();
   static void loadStaticAssets();
 };
