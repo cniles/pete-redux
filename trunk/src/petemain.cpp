@@ -1,7 +1,8 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <map>
-#include <fstream>
+
 #include <stdlib.h>
 #include <time.h>
 
@@ -23,7 +24,7 @@ int screen_width = 640;
 int screen_height = 480;
 int screen_bpp = 32;
 
-const char* LEVEL_FILE_NAME = "levels/level1.txt";
+const char* LEVEL_FILE_NAME = "levels/aitest.txt";
 const char* BACKGROUND_IMAGE_FILE_NAME = "gfx/background.png";
 GLuint background;
 
@@ -51,7 +52,7 @@ void loadStaticAssets() {
 
 void initSDL() {
   SDL_Init(SDL_INIT_EVERYTHING);
-  SDL_WM_SetCaption( "Pete Re-dux", NULL );
+  SDL_WM_SetCaption( "pete-redux", NULL );
   SDL_SetVideoMode(screen_width, screen_height, screen_bpp, SDL_OPENGL);
 }
 

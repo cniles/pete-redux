@@ -17,11 +17,14 @@
 #define PLAYER_IN_AIR_ACCELERATION 3
 
 #define PLAYER_JUMP_VELOCITY 4.8f
-#define PLAYER_JUMP_MAX_TIME 0.4f
+#define PLAYER_JUMP_MAX_TIME 0.25f
 #define PLAYER_JUMP_MIN_TIME 0.025f
 
 #define PLAYER_SHOOT_PAUSE_TIME 0.75f
 #define PLAYER_SHOTGUN_FORCE 150.0f
+
+#define PLAYER_ON_GROUND_TOLERANCE 0.2
+
 
 class GameState;
 class Player {
@@ -39,12 +42,14 @@ class Player {
   
   bool jumping;
   bool on_ground;
+  bool hit_head;
   bool can_shoot;
   bool ctrl_released;
   bool flip_sprite;
 
   void handleKeyStates(const KeyStates&);
   void calcIsOnGround();
+  void calcHitHead();
   void fireShotgun();
   void applyJumpVelocity();
  public:
@@ -54,6 +59,7 @@ class Player {
   Player(int x, int y, GameState*);
   ~Player();
   bool isOnGround();
+  bool hasHitHead();
   float getX();
   float getY();
   void draw() const;

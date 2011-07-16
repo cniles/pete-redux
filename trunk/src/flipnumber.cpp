@@ -3,12 +3,12 @@
 
 Animation FlipNumber::animation = Animation();
 
-FlipNumber::FlipNumber(float x, float y, int value, int digits)
+FlipNumber::FlipNumber(float x, float y, unsigned int value, int digits)
   : x(x), y(y), value(value), digits(digits) {
 }
 
 void FlipNumber::draw() {
-  int temp = value;
+  unsigned int temp = value;
   int numbers[digits];
 
 
