@@ -4,15 +4,21 @@
 #include "statemachineobject.h"
 
 class DarkChampion : public StateMachineObject {
+  const static int CHARGING = 0;
+  const static int SWINGING = 1;
   const static int INITIAL_HEALTH = 5;
   const static int DAMAGE = 5;
   const static float VIEW_RANGE = 5.0f;
+  const static float ATTACK_RANGE = 0.5f;
   const static float ATTACK_COOLDOWN = 1.0f;
   const static float STUNNED_COOLDOWN = 1.0f;
   const static float MOVE_EPS = 0.1f;
   const static float CHASE_COOLDOWN = 0.25f;
+
+
   static Animation animation;
 
+  int substate;
   int health;
   int timer;
   btVector3 destination;
