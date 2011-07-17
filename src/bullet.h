@@ -1,6 +1,6 @@
 #ifndef BULLET_H_
 #define BULLET_H_
-
+#include "debug.h"
 #include <BulletCollision/CollisionShapes/btBox2dShape.h>
 #include <BulletCollision/CollisionDispatch/btEmptyCollisionAlgorithm.h>
 #include <BulletCollision/CollisionDispatch/btBox2dBox2dCollisionAlgorithm.h>
@@ -9,6 +9,7 @@
 #include <BulletCollision/CollisionShapes/btConvex2dShape.h>
 #include <BulletCollision/NarrowPhaseCollision/btMinkowskiPenetrationDepthSolver.h>
 #include <btBulletDynamicsCommon.h>
+#include <BulletCollision/CollisionDispatch/btCollisionWorld.h>
 
 #define BIT(x) (1<<(x))
 enum CollisionType {
@@ -31,4 +32,5 @@ struct BulletCore {
 };
 
 BulletCore* createPhysicsWorld();
+
 #endif

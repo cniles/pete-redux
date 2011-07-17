@@ -11,6 +11,7 @@ void DarkChampion::StateIdle::onLeave() {}
 
 
 void DarkChampion::StateMoving::onEnter() {
+  owner->animation_timer.setClip(0);
   owner->destination = owner->getFurthestFacingPointOnPlatform();
   AI_DEBUG_OUT("Entered DarkChampionMoveState");
   if((owner->getPosition() - owner->destination).fuzzyZero()) {
@@ -46,8 +47,36 @@ void DarkChampion::StateMoving::onLeave() {}
 
 void DarkChampion::StateAttack::onEnter() {
   AI_DEBUG_OUT("Entered DarkChampion::StateAttack"); 
+  owner->animation_timer.setClip(3);
+  owner->substate = CHARGING;
 }
-void DarkChampion::StateAttack::onUpdate(float dt) {}
+void DarkChampion::StateAttack::onUpdate(float dt) {
+  switch(owner->substate) {
+  case(CHARGING):
+    {
+      btVector3 force(owner->getDirection(), 0.0f, 0.0f);
+      force = force * 5;
+      owner->getRigidBody()->applyCentralForce(force);
+      if(!owner->lookForPlayer(btVector3(owner->getDirection() * VIEW_RANGE, 0, 0))) {
+	owner->changeState(new DarkChampion::StateMoving(owner));
+	return;		
+      }
+      else if(owner->lookForPlayer(btVector3(owner->getDirection() * ATTACK_RANGE, 0, 0))) {
+	owner->animation_timer.setClip(1);
+	owner->substate = SWINGING;  
+      }      
+    break;
+    }
+  case(SWINGING):
+    {
+      if(!owner->lookForPlayer(btVector3(owner->getDirection() * ATTACK_RANGE, 0, 0))) {
+	owner->animation_timer.setClip(3);
+	owner->substate = CHARGING;
+      }    
+      break;
+    }
+  }
+}
 void DarkChampion::StateAttack::onLeave() {}
 
 
@@ -73,7 +102,6 @@ void DarkChampion::StateDead::onLeave() {}
 
 DarkChampion::DarkChampion(GameState* gamestate, btVector3 position) 
   : StateMachineObject(gamestate, position, &animation, PhysicsObject::default_collision_scheme, new DarkChampion::StateMoving(this)), health(INITIAL_HEALTH), can_attack(true) {
-  animation_timer.setClip(0);
 }
 
 void DarkChampion::loadStaticAssets() {
