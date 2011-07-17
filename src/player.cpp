@@ -182,7 +182,7 @@ void Player::calcHitHead() {
       }
     }
   }
-}
+} 
 
 void Player::calcIsOnGround() {
   on_ground = false;

@@ -4,7 +4,7 @@
 #include <iostream>
 
 //#define DEBUG
-//#define AI_DEBUG
+#define AI_DEBUG
 
 #ifdef DEBUG
 #define DEBUG_OUT(MESSAGE) std::cerr << MESSAGE << std::endl;

@@ -86,7 +86,7 @@ void AnimationTimer::playClipOnce(int id, int next_id) {
   if(0 <= id && id < animation->getClipCount()) {
     next_clip = next_id;
     current_clip = id;
-    timer = 0;
+    timer = animation->getDuration(current_clip);
     current_frame = 0;
   }
 }
@@ -95,7 +95,7 @@ void AnimationTimer::setClip(int id) {
   if(0 <= id && id < animation->getClipCount()) {
     next_clip = id;
     current_clip = id;
-    timer = 0;
+    timer = animation->getDuration(current_clip);
     current_frame = 0;
   }
 }

@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "statemachineobject.h"
 #include "gamestate.h"
 
@@ -59,4 +61,19 @@ void StateMachineObject::stopUpdate() {
 
 float StateMachineObject::getDistance2ToPlayer() {
   return position.distance2(gamestate->player->getPosition());
+}
+
+bool StateMachineObject::lookForPlayer(btVector3 direction) {
+  direction += position;
+  btCollisionWorld::ClosestRayResultCallback callback(position, direction);
+  gamestate->dynamics_world->rayTest(position, direction, callback);
+  if(callback.hasHit()) {
+    if(callback.m_collisionObject) {
+      std::cerr << "Sees SOMETHING..." << std::endl;
+      if(callback.m_collisionObject->getUserPointer() == gamestate->player) {
+	return true;
+      }
+    }
+  }  
+  return false;
 }
