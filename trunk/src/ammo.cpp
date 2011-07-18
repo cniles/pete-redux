@@ -43,7 +43,6 @@ void Ammo::draw() {
   drawQuad(); 
   glPopMatrix();
 
-  glBindTexture(GL_TEXTURE_2D, animation.getFrame(0, 0));
   glPushMatrix();
   glTranslatef(0.0f, 0.0f, -0.5f);
   drawQuadFlip(); 

@@ -42,3 +42,4 @@ class StateMachineObject : public PhysicsObject {
 };
 
 #endif
+ 

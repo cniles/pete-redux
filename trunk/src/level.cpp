@@ -137,8 +137,23 @@ void Level::draw(int start_col, int end_col) const {
 }
 
 GameObjectToken Level::getObject(int id) {
-  std::vector<GameObjectToken>::iterator token_iter = std::find(objects.begin(), objects.end(), 30);
+  std::vector<GameObjectToken>::iterator token_iter = std::find(objects.begin(), objects.end(), id);
   return (*token_iter);
+}
+
+TokenIter Level::getObjectAt(int x, int y) {
+  TokenIter token_iter = objects.begin();
+  while(token_iter != objects.end()){
+    if(token_iter->x == x && token_iter->y == y) {
+      return token_iter;
+    }
+    token_iter++;
+  }
+  return objects.end();
+}
+
+void Level::removeObject(TokenIter iter) {
+  objects.erase(iter);
 }
 
 void Level::createPlans() {

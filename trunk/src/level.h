@@ -25,6 +25,8 @@ struct TileDrawPlan {
 };
 
 typedef std::vector<GameObjectToken> TokenList;
+typedef std::vector<GameObjectToken>::iterator TokenIter;
+typedef std::vector<GameObjectToken>::const_iterator ConstTokenIter;
 
 class Level {
   int length;
@@ -38,14 +40,20 @@ public:
   inline int getLength() const { return length; }
   inline int getTile(int x, int y) const { return (x>=0 && x < tiles.size() && y >=0 && y < 10 )?tiles[x][y] : -1;}
   inline int setTile(int x, int y, int id) { tiles[x][y] = id; }
+
+  TokenIter getObjectAt(int, int);
+
   inline int addObject(GameObjectToken object) { objects.push_back(object); }
   GameObjectToken getObject(int id);
-  inline std::vector<GameObjectToken>::const_iterator getTokensStart() const {
+  void removeObject(TokenIter);
+
+  inline ConstTokenIter getTokensStart() const {
     return objects.begin();
   }
-  inline std::vector<GameObjectToken>::const_iterator getTokensEnd() const {
+  inline ConstTokenIter getTokensEnd() const {
     return objects.end();
   }
+
   void createPlans();
   void drawTile(int, int) const;
   void draw(int,int) const;
