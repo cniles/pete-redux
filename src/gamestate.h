@@ -10,6 +10,7 @@
 struct GameState {
   Level level;
   Player* player;
+  bool exit_toggled;
   std::vector<GameObject*> objects;
   std::vector<btRigidBody*> level_bodies;
   std::vector<btCollisionShape*> level_shapes;

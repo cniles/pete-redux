@@ -12,17 +12,21 @@ class DarkChampion : public StateMachineObject {
   const static float ATTACK_RANGE = 0.5f;
   const static float ATTACK_COOLDOWN = 1.0f;
   const static float STUNNED_COOLDOWN = 1.0f;
+  const static float MAX_HANG_TIME = 3.0f;
   const static float MOVE_EPS = 0.1f;
   const static float CHASE_COOLDOWN = 0.25f;
 
 
   static Animation animation;
 
+  float hang_timer;
   int substate;
   int health;
   int timer;
   btVector3 destination;
+  btVector3 previous_position;
   bool can_attack;
+  bool hung;
   float attack_timer;
 
   MAKE_STATE(StateIdle, DarkChampion);

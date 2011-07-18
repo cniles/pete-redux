@@ -17,6 +17,7 @@
 #include "texture.h"
 #include "draw.h"
 #include "flipnumber.h"
+#include "editor.h"
 
 #include "objecttypes.h"
 
@@ -24,7 +25,7 @@ int screen_width = 640;
 int screen_height = 480;
 int screen_bpp = 32;
 
-const char* LEVEL_FILE_NAME = "levels/aitest.txt";
+const char* LEVEL_FILES[] = { "levels/level1.txt", "levels/level2.txt", "levels/level3.txt" };
 const char* BACKGROUND_IMAGE_FILE_NAME = "gfx/background.png";
 GLuint background;
 
@@ -45,29 +46,17 @@ void loadStaticAssets() {
   Soul::loadStaticAssets();
   DarkChampion::loadStaticAssets();
   Ammo::loadStaticAssets();
+  Exit::loadStaticAssets();
   Medpack::loadStaticAssets();
 
   FlipNumber::loadStaticAssets();
+  Editor::loadStaticAssets();
 }
 
 void initSDL() {
   SDL_Init(SDL_INIT_EVERYTHING);
   SDL_WM_SetCaption( "pete-redux", NULL );
   SDL_SetVideoMode(screen_width, screen_height, screen_bpp, SDL_OPENGL);
-}
-
-void reshapePerspective() {
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective(45.0f, (float)screen_width/(float)screen_height, 1, 30);
-  glMatrixMode(GL_MODELVIEW);
-}
-
-void reshapeOrthogonal() {
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0, screen_width, 0, screen_height, -1, 1);
-  glMatrixMode(GL_MODELVIEW);
 }
 
 void initGL() {
@@ -152,6 +141,7 @@ void draw(const GameState& gamestate) {
   
   FlipNumber health(60, 60, gamestate.player->getHealth(), 2);
   FlipNumber ammo(60, 100, gamestate.player->getAmmo(), 2);
+
   health.draw();
   ammo.draw();
   
@@ -178,25 +168,24 @@ void processCollisions(GameState* gamestate) {
       other->notifyCollisionWithPlayer();
       //gamestate->player->notifyCollisionWithObject(other);
     }
-
-    /*int num_contacts = contact_manifold->getNumContacts();
-    for(int j = 0; j < num_contacts; j++) {
-      btManifoldPoint& point = contact_manifold->getContactPoint(j);
-      }*/
   }
 }
 
 Uint32 start = 0;
 Uint32 stop = 0;
 void run() {
+  int current_level = 0;
+  const static int PLAY = 1;
+  const static int EDIT = 2;
+  int mode = PLAY;
   float dtf = 0.0f;
   Uint32 elapsed = 0;
   SDL_Event event;
   bool quit = false;
 
   srand(time(NULL));
-
-  GameState gamestate(loadLevel(LEVEL_FILE_NAME));
+  Editor editor(loadLevel(LEVEL_FILES[current_level])); 
+  GameState* gamestate = new GameState(editor.level);
 
   KeyStates key_states;
   
@@ -212,25 +201,54 @@ void run() {
       if(event.type == SDL_QUIT) {
 	quit = true;
       }
-      if(event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-	handleKeys(event, key_states);
-	if(event.key.keysym.sym == SDLK_ESCAPE) {
+      if(event.type == SDL_KEYUP) {
+	switch(event.key.keysym.sym) {
+	case(SDLK_ESCAPE):
 	  quit = true;
+	  break;
+	case(SDLK_TAB):
+	  mode ^= (PLAY | EDIT);
+	  break;
+	case(SDLK_F1):
+	  delete(gamestate);
+	  gamestate = new GameState(editor.level);
+	  break;
+	};
+      }
+      if(mode == PLAY) {	
+	if(event.type == SDL_KEYUP || SDL_KEYDOWN) {
+	  handleKeys(event, key_states);
 	}
       }
+      else if(mode == EDIT) {
+	editor.handleEvent(event);
+      }
     }
+    
+    if(mode == PLAY) {
+      gamestate->dynamics_world->stepSimulation(dtf,10);
+      processCollisions(gamestate);
+      
+      gamestate->player->update(elapsed, key_states);
+      
+      std::vector<GameObject*>::const_iterator object_iter = gamestate->objects.begin();
+      while(object_iter != gamestate->objects.end()) {
+	(*object_iter)->update(dtf);
+	object_iter++;
+      }
 
-    gamestate.dynamics_world->stepSimulation(dtf,10);
-    processCollisions(&gamestate);
+      draw(*gamestate);
 
-    gamestate.player->update(elapsed, key_states);
-
-    std::vector<GameObject*>::const_iterator object_iter = gamestate.objects.begin();
-    while(object_iter != gamestate.objects.end()) {
-      (*object_iter)->update(dtf);
-      object_iter++;
+      if(gamestate->exit_toggled) {
+	current_level++;
+	delete(gamestate);
+	gamestate = new GameState(loadLevel(LEVEL_FILES[current_level]));
+      }
     }
-    draw(gamestate);
+    if(mode == EDIT) {      
+      editor.update();
+      editor.draw();
+    }
   }
 }
 

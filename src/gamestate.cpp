@@ -6,7 +6,7 @@
 #include "objecttypes.h"
 
 GameState::GameState(Level level)
-  : level(level) {
+  : level(level), exit_toggled(false) {
   std::cerr << "Initializing dynamics world...";
   bullet_core = createPhysicsWorld();
   dynamics_world = bullet_core->dynamics_world;
@@ -35,11 +35,15 @@ GameState::GameState(Level level)
       objects.push_back(new Soul(this, position));
       break;
     case 3:
-      DEBUG_OUT("New Soul");
+      DEBUG_OUT("New DarkChampion");
       objects.push_back(new DarkChampion(this, position));
       break;
+    case 21:
+      DEBUG_OUT("New Exit");
+      objects.push_back(new Exit(this, position));
+      break;
     case 98:
-      DEBUG_OUT("New medpack");
+      DEBUG_OUT("New Medpack");
       objects.push_back(new Medpack(this, position));
       break;
     case 99:

@@ -3,6 +3,10 @@
 
 #include <SDL/SDL_opengl.h>
 
+extern int screen_width;
+extern int screen_height;
+
+
 inline void drawQuad() {
   glBegin(GL_QUADS);
   glTexCoord2i(0, 1); glVertex2f(0,0);
@@ -51,5 +55,20 @@ inline void drawCube() {
   drawQuad();
   glPopMatrix();
 }
+
+inline void reshapePerspective() {
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective(45.0f, (float)screen_width/(float)screen_height, 1, 30);
+  glMatrixMode(GL_MODELVIEW);
+}
+
+inline void reshapeOrthogonal() {
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0, screen_width, 0, screen_height, -1, 1);
+  glMatrixMode(GL_MODELVIEW);
+}
+
 
 #endif

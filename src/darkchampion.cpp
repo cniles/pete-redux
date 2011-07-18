@@ -18,7 +18,7 @@ void DarkChampion::StateMoving::onEnter() {
     owner->changeDirection();
     owner->destination = owner->getFurthestFacingPointOnPlatform();    
     if((owner->getPosition() - owner->destination).fuzzyZero()) {
-      owner->changeDirection();
+      //owner->changeDirection();
       owner->changeState(new DarkChampion::StateIdle(owner));
     }
   }
@@ -28,6 +28,25 @@ void DarkChampion::StateMoving::onUpdate(float dt) {
   // Check if object is near it's destination & turn it around if so
   const static float in_range_eps = 0.1f;
   btVector3 current_position = owner->getPosition();
+  owner->hung = false;
+  if((owner->previous_position - current_position).length() <= 0.01f) {
+    owner->hung = true;
+  }
+  owner->previous_position = current_position;
+  if(owner->hung == true) {
+    owner->hang_timer += dt;
+  }
+  else {
+    owner->hang_timer = 0.0f;
+  }
+  
+  if(owner->hang_timer > MAX_HANG_TIME) {
+    owner->changeDirection();
+    owner->changeState(new DarkChampion::StateMoving(owner));
+    owner->hang_timer = 0.0f;
+    return;
+  }
+
   if(current_position.distance(owner->destination) <= in_range_eps) {
     owner->changeDirection();
     owner->destination = owner->getFurthestFacingPointOnPlatform();
@@ -101,7 +120,7 @@ void DarkChampion::StateDead::onUpdate(float dt) {}
 void DarkChampion::StateDead::onLeave() {}
 
 DarkChampion::DarkChampion(GameState* gamestate, btVector3 position) 
-  : StateMachineObject(gamestate, position, &animation, PhysicsObject::default_collision_scheme, new DarkChampion::StateMoving(this)), health(INITIAL_HEALTH), can_attack(true) {
+  : StateMachineObject(gamestate, position, &animation, PhysicsObject::default_collision_scheme, new DarkChampion::StateMoving(this)), health(INITIAL_HEALTH), can_attack(true), hang_timer(0.0f) {
 }
 
 void DarkChampion::loadStaticAssets() {
