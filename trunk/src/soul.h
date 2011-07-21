@@ -14,7 +14,7 @@ class Soul : public StateMachineObject {
   MAKE_STATE(StateMove, Soul);
   MAKE_STATE(StateIdle, Soul);
  public:
-  Soul(GameState*, btVector3);
+  Soul(GameState*, const btVector3&);
   void notifyWasShot(int, int);
   static void loadStaticAssets();
 };

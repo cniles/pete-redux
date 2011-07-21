@@ -11,7 +11,7 @@ class Ammo : public PhysicsObject {
 
   int rotation;
  public:
-  Ammo(GameState*, btVector3 position);
+  Ammo(GameState*, const btVector3& position);
   ~Ammo();
   static void loadStaticAssets();
   void update(float dt);

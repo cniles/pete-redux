@@ -3,9 +3,13 @@
 #include "zombie.h"
 #include "gamestate.h"
 
+const float Zombie::ATTACK_COOLDOWN = 0.5f;
+const float Zombie::MOVE_EPS = 0.1f;
+const float Zombie::CHASE_COOLDOWN = 0.25f;
+
 Animation Zombie::animation = Animation();
 
-Zombie::Zombie(GameState* gamestate, btVector3 position) 
+Zombie::Zombie(GameState* gamestate, const btVector3& position) 
   : StateMachineObject(gamestate, position, &animation, default_collision_scheme, new Zombie::StateMoving(this)), health(INITIAL_HEALTH),
     can_attack(true) {
 }

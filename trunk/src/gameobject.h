@@ -17,7 +17,7 @@ class GameObject {
   btVector3 position;
   int direction;
  public:
-  GameObject(GameState* gamestate, btVector3 position, Animation* animation);
+  GameObject(GameState* gamestate, const btVector3& position, Animation* animation);
   virtual ~GameObject();
 
   inline btVector3 getPosition() {return position;}

@@ -30,7 +30,7 @@ class StateMachineObject : public PhysicsObject {
   State* current_state;
   bool disable_update;
  protected:
-  StateMachineObject(GameState* gamestate, btVector3 position, Animation* animation, CollisionScheme scheme, State* state);
+  StateMachineObject(GameState* gamestate, const btVector3& position, Animation* animation, CollisionScheme scheme, State* state);
   ~StateMachineObject();
   void stopUpdate();
   void update(float dt);
@@ -38,7 +38,7 @@ class StateMachineObject : public PhysicsObject {
   void changeState(State* new_state);
   btVector3 getFurthestFacingPointOnPlatform();
   float getDistance2ToPlayer();
-  bool lookForPlayer(btVector3 direction);
+  bool lookForPlayer(const btVector3& direction);
 };
 
 #endif

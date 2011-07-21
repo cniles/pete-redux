@@ -6,7 +6,7 @@ Animation Exit::animation = Animation();
 
 CollisionScheme Exit::exit_collision_scheme(COL_ENEMY, COL_LEVEL, btScalar(0.0f), &PhysicsObject::default_collision_shape);
 
-Exit::Exit(GameState* gamestate, btVector3 position) 
+Exit::Exit(GameState* gamestate, const btVector3& position) 
   : PhysicsObject(gamestate, position, &animation, exit_collision_scheme) {
 }
 

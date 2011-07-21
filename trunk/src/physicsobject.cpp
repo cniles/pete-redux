@@ -6,7 +6,7 @@ btCapsuleShape PhysicsObject::child_default_collision_shape(0.25, 0.4);
 btConvex2dShape PhysicsObject::default_collision_shape(&PhysicsObject::child_default_collision_shape);
 CollisionScheme PhysicsObject::default_collision_scheme(COL_ENEMY, COL_LEVEL | COL_PLAYER, btScalar(1.0), &PhysicsObject::default_collision_shape);
 
-PhysicsObject::PhysicsObject(GameState* gamestate, btVector3 position, Animation* animation, CollisionScheme scheme)
+PhysicsObject::PhysicsObject(GameState* gamestate, const btVector3& position, Animation* animation, CollisionScheme scheme)
   : GameObject(gamestate, position, animation), collision_with_player_detected(false) {
   DEBUG_OUT("Creating physics object...");
   btMotionState* motion_state = new GameObjectMotionState(btTransform(btQuaternion(0,0,0,1), position), this);

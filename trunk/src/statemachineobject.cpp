@@ -5,7 +5,7 @@ State::State(StateMachineObject* owner)
   : __owner(owner) {
 }
 
-StateMachineObject::StateMachineObject(GameState* gamestate, btVector3 position, Animation* animation, CollisionScheme scheme, State* state) 
+StateMachineObject::StateMachineObject(GameState* gamestate, const btVector3& position, Animation* animation, CollisionScheme scheme, State* state) 
   : PhysicsObject(gamestate, position, animation, scheme), current_state(NULL), disable_update(false) {
   changeState(state);
 }
@@ -61,12 +61,12 @@ float StateMachineObject::getDistance2ToPlayer() {
   return position.distance2(gamestate->player->getPosition());
 }
 
-bool StateMachineObject::lookForPlayer(btVector3 direction) {
-  direction += position;
-  btCollisionWorld::ClosestRayResultCallback callback(position, direction);
+bool StateMachineObject::lookForPlayer(const btVector3& direction) {
+  btVector3& new_direction = position;
+  btCollisionWorld::ClosestRayResultCallback callback(position, new_direction);
   callback.m_collisionFilterGroup = COL_ENEMY;
   callback.m_collisionFilterMask = COL_PLAYER | COL_LEVEL; // can see through other enemies
-  gamestate->dynamics_world->rayTest(position, direction, callback);
+  gamestate->dynamics_world->rayTest(position, new_direction, callback);
   if(callback.hasHit()) {
     if(callback.m_collisionObject) {
        if(callback.m_collisionObject->getUserPointer() == gamestate->player) {	

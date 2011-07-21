@@ -256,6 +256,7 @@ void run() {
 int main() {
   initSDL();
   initGL();
+  std::cout << "pete-redux v0.2" << std::endl;
   loadStaticAssets();
   background = loadTexture(BACKGROUND_IMAGE_FILE_NAME);
   run();
