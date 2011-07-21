@@ -10,7 +10,7 @@ class Exit : public PhysicsObject {
 
   int rotation;
  public:
-  Exit(GameState*, btVector3 position);
+  Exit(GameState*, const btVector3& position);
   ~Exit();
   static void loadStaticAssets();
   void update(float dt);

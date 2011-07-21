@@ -24,7 +24,7 @@ class PhysicsObject : public GameObject {
   static CollisionScheme default_collision_scheme;
 
   PhysicsObject(GameState* gamestate, 
-	        btVector3 position,
+		const btVector3& position,
 		Animation* animation,
 		CollisionScheme scheme);
   ~PhysicsObject();

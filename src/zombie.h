@@ -6,9 +6,9 @@
 class Zombie : public StateMachineObject {
   const static int INITIAL_HEALTH = 3;
   const static int ZOMBIE_DAMAGE = 5;
-  const static float ATTACK_COOLDOWN = 0.5f;
-  const static float MOVE_EPS = 0.1f;
-  const static float CHASE_COOLDOWN = 0.25f;
+  const static float ATTACK_COOLDOWN;
+  const static float MOVE_EPS;
+  const static float CHASE_COOLDOWN;
 
   static Animation animation;
 
@@ -25,7 +25,7 @@ class Zombie : public StateMachineObject {
   MAKE_STATE(StateChase, Zombie);
 
  public:
-  Zombie(GameState*, btVector3 position);
+  Zombie(GameState*, const btVector3& position);
   void notifyWasShot(int, int);
   static void loadStaticAssets();
   btVector3 getChaseDestination();

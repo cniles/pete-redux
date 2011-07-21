@@ -3,7 +3,7 @@
 #include "gameobject.h"
 #include "draw.h"
 
-GameObject::GameObject(GameState* gamestate, btVector3 position, Animation* animation)
+GameObject::GameObject(GameState* gamestate, const btVector3& position, Animation* animation)
   : gamestate(gamestate), animation_timer(AnimationTimer(animation)), 
     position(position), direction(-1), disable_draw(false) {
   DEBUG_OUT("Create GameObject");

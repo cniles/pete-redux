@@ -32,7 +32,7 @@ void Soul::StateDead::onUpdate(float dt) {
 }
 void Soul::StateDead::onLeave() {}
 
-Soul::Soul(GameState* gamestate, btVector3 position) 
+Soul::Soul(GameState* gamestate, const btVector3& position) 
   : StateMachineObject(gamestate, position, &animation, PhysicsObject::default_collision_scheme, new Soul::StateMove(this)), 
     health(Soul::INITIAL_HEALTH) {
   rigid_body->setGravity(btVector3(0.0f, 0.0f, 0.0f));

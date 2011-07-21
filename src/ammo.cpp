@@ -5,8 +5,9 @@
 
 Animation Ammo::animation = Animation();
 
-Ammo::Ammo(GameState* gamestate, btVector3 position) 
+Ammo::Ammo(GameState* gamestate, const btVector3& position) 
   : PhysicsObject(gamestate, position, &animation, default_collision_scheme), rotation(0) {
+  rigid_body->setGravity(btVector3(0.0f, 0.0f, 0.0f));
 }
 
 Ammo::~Ammo () {

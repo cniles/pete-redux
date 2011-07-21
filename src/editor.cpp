@@ -254,7 +254,7 @@ void Editor::loadStaticAssets() {
 void Editor::flipTokens() {
   TokenIter token_iter = level.getTokensStart();
   while(token_iter != level.getTokensEnd()) {
-    token_iter->y = abs(level.getHeight() - token_iter->y);
+    token_iter->y = abs(level.getHeight() - 1 - token_iter->y);
     ++token_iter;
   }
 }

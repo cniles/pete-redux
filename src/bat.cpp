@@ -5,6 +5,11 @@
 #include <iostream>
 #include <vector>
 
+const float Bat::MASS = 1.0f;
+const float Bat::ATTACK_COOLDOWN = 0.5f;
+const float Bat::GRAVITY = 0.0f;
+const float Bat::DETECT_RANGE = 9.0f;
+
 void Bat::StateMove::onEnter() {
   owner->timer = 0;
 }
@@ -65,7 +70,7 @@ btBox2dShape Bat::collision_shape(btVector3(0.2f, 0.2f, 0.1f));
 CollisionScheme Bat::collision_scheme(COL_ENEMY, COL_LEVEL | COL_PLAYER, Bat::MASS, &Bat::collision_shape);
 Animation Bat::animation;
 
-Bat::Bat(GameState* gamestate, btVector3 position)
+Bat::Bat(GameState* gamestate, const btVector3& position)
   : StateMachineObject(gamestate, position, &animation, Bat::collision_scheme, new Bat::StateMove(this)),
     health(Bat::INITIAL_HEALTH) {
   rigid_body->setGravity(btVector3(0.0f, 0.0f, 0.0f));

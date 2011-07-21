@@ -5,6 +5,6 @@ include_directories("/usr/local/include/bullet")
 
 set (EXTRA_LIBS ${EXTRA_LIBS} BaseCode ClientCode SDL SDL_image GLU GL BulletDynamics BulletCollision LinearMath)
 set (pete-redux_VERSION_MAJOR 0)
-set (pete-redux_VERSION_MINOR 1)
+set (pete-redux_VERSION_MINOR 2)
 
 add_subdirectory(src)
