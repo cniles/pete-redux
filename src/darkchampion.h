@@ -36,7 +36,7 @@ class DarkChampion : public StateMachineObject {
   MAKE_STATE(StateDying, DarkChampion);
 
  public:
-  DarkChampion(GameState*, btVector3);
+  DarkChampion(GameState*, const btVector3&);
   void notifyWasShot(int, int);
   static void loadStaticAssets();
 };

@@ -243,6 +243,7 @@ void run() {
 	current_level++;
 	delete(gamestate);
 	gamestate = new GameState(loadLevel(LEVEL_FILES[current_level]));
+        editor.setLevel(gamestate->level);
       }
     }
     if(mode == EDIT) {      

@@ -53,7 +53,14 @@ void Editor::handleEvent(const SDL_Event& event) {
     case(SDLK_BACKSLASH):
       mode ^= (TILE | OBJECT);
       break;
-    };    
+    case(SDLK_F6):
+      std::cerr << "Saving level..." << std::endl;
+      saveLevel(level);
+      break;
+    case(SDLK_F9): 
+      flipTokens();
+      break;
+    };
     break;
   case(SDL_MOUSEMOTION):
     mouse.x = event.motion.x;
@@ -70,7 +77,10 @@ void Editor::handleEvent(const SDL_Event& event) {
     if(event.button.button == SDL_BUTTON_MIDDLE) {
       dragging = false;
     }		
-    else if(event.button.button == SDL_BUTTON_LEFT) {     
+    else if(event.button.button == SDL_BUTTON_LEFT) {
+      if(mouse.tile_x < 0) {
+	break;
+      }
       if(mode == TILE) {
 	level.setTile(mouse.tile_x, mouse.tile_y, tile_type);
 	level.createPlans();
@@ -86,6 +96,9 @@ void Editor::handleEvent(const SDL_Event& event) {
       }
     }
     else if(event.button.button == SDL_BUTTON_RIGHT) {
+      if(mouse.tile_x < 0) {
+	break;
+      }
       if(mode == TILE) {
 	level.setTile(mouse.tile_x, mouse.tile_y, 0);
 	level.createPlans();
@@ -124,7 +137,7 @@ void updateMouseWorldCoordinates(MousePosition &mouse) {
   mouse.tile_y = (int)obj_y;
 }
 
-void Editor::drawTokens() {
+void Editor::drawTokens() const {
     std::vector<GameObjectToken>::const_iterator token_iter = level.getTokensStart();
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glAlphaFunc(GL_GREATER, 0.1f);
@@ -236,4 +249,12 @@ void Editor::loadStaticAssets() {
     token_textures.insert(std::pair<int, GLuint>(id, texture));
   }
   std::cerr << "Loaded " << token_textures.size() << " token images" << std::endl;
+}
+
+void Editor::flipTokens() {
+  TokenIter token_iter = level.getTokensStart();
+  while(token_iter != level.getTokensEnd()) {
+    token_iter->y = abs(level.getHeight() - token_iter->y);
+    ++token_iter;
+  }
 }

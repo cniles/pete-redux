@@ -34,9 +34,12 @@ struct Editor {
   
   void update();
   void draw();
-  void drawTokens();
+  void drawTokens() const;
   void handleEvent(const SDL_Event& event);
+  void flipTokens();
   static void loadStaticAssets();
+  inline void setLevel(const Level& lvl) { level = lvl; }
+  inline std::string getLevelName() const { return level.getFileName(); }
 };
 
 #endif

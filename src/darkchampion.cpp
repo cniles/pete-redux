@@ -119,7 +119,7 @@ void DarkChampion::StateDead::onEnter() {}
 void DarkChampion::StateDead::onUpdate(float dt) {}
 void DarkChampion::StateDead::onLeave() {}
 
-DarkChampion::DarkChampion(GameState* gamestate, btVector3 position) 
+DarkChampion::DarkChampion(GameState* gamestate, const btVector3& position) 
   : StateMachineObject(gamestate, position, &animation, PhysicsObject::default_collision_scheme, new DarkChampion::StateMoving(this)), health(INITIAL_HEALTH), can_attack(true), hang_timer(0.0f) {
 }
 
