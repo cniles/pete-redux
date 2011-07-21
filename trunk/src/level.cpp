@@ -66,10 +66,10 @@ TileDrawPlan TileDrawPlan::createPlan(int x, int y, const Level& level) {
   
 }
 
-Level::Level(int length)
-  : length(length) {
-  plans = std::vector<std::vector<TileDrawPlan> >(length, std::vector<TileDrawPlan>(10));
-  tiles = std::vector<std::vector<int> >(length, std::vector<int>(10));
+Level::Level(int length, int height, std::string file_name)
+  : length(length), height(height), file_name(file_name) {
+  plans = std::vector<std::vector<TileDrawPlan> >(length, std::vector<TileDrawPlan>(height));
+  tiles = std::vector<std::vector<int> >(length, std::vector<int>(height));
   front_tileset = loadTileset("gfx/tiles.bmp");
   top_tileset = loadTileset("gfx/toptiles.bmp");
 }
@@ -129,7 +129,7 @@ void Level::draw(int start_col, int end_col) const {
   start_col = min(max(0, length), length);
   end_col = min(max(0, end_col), length);
   for(int i = 0; i < length; i++) {
-    for(int j = 0; j < 10; j++) {
+    for(int j = 0; j < height; j++) {
       if(tiles[i][j]!=0)
 	drawTile(i, j);
     }
@@ -158,7 +158,7 @@ void Level::removeObject(TokenIter iter) {
 
 void Level::createPlans() {
   for(int x = 0; x < length; x++) {
-    for(int y = 0; y < 10; y++) {
+    for(int y = 0; y < height; y++) {
       plans[x][y] = TileDrawPlan::createPlan(x, y, *this);
     }
   }
@@ -168,8 +168,10 @@ Level loadLevel(const char* level_file) {
   std::fstream file(level_file, std::fstream::in);
   int id_in, x, y;
   int length;
+  int height;
   file >> length;
-  Level result(length);
+  file >> height;
+  Level result(length, height, level_file);
   for(int j = 9; j >= 0; j--) {
     for(int i = 0; i < length; i++) {
       file >> id_in;
@@ -182,4 +184,22 @@ Level loadLevel(const char* level_file) {
   }
   result.createPlans();
   return result;
+}
+
+void saveLevel(const Level& level) {
+  std::fstream file(level.getFileName().c_str(), std::fstream::out);
+  int length = level.getLength();
+  int height = level.getHeight();
+  file << length << ' ' << height << '\n';
+  for(int y = 1; y <= height; y++) {
+    for(int x = 0; x < length; x++) {
+      file << level.getTile(x, height-y) << ' ';
+    }
+    file << '\n';
+  }
+  ConstTokenIter token_iter = level.getTokensStart();
+  while(token_iter != level.getTokensEnd()) {
+    file << token_iter->id << ' ' << token_iter->x << ' ' << token_iter->y << '\n';
+    token_iter++; 
+  }
 }

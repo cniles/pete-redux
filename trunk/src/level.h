@@ -29,6 +29,8 @@ typedef std::vector<GameObjectToken>::iterator TokenIter;
 typedef std::vector<GameObjectToken>::const_iterator ConstTokenIter;
 
 class Level {
+  std::string file_name;
+  int height;
   int length;
   Tileset front_tileset;
   Tileset top_tileset;
@@ -36,8 +38,10 @@ class Level {
   std::vector<std::vector<int> > tiles;
   std::vector<GameObjectToken> objects;
 public:
-  Level(int length);
+  Level(int length, int height, std::string file_name);
+  inline std::string getFileName() const { return file_name; };
   inline int getLength() const { return length; }
+  inline int getHeight() const { return height; }
   inline int getTile(int x, int y) const { return (x>=0 && x < tiles.size() && y >=0 && y < 10 )?tiles[x][y] : -1;}
   inline int setTile(int x, int y, int id) { tiles[x][y] = id; }
 
@@ -45,6 +49,7 @@ public:
 
   inline int addObject(GameObjectToken object) { objects.push_back(object); }
   GameObjectToken getObject(int id);
+  
   void removeObject(TokenIter);
 
   inline ConstTokenIter getTokensStart() const {
@@ -54,11 +59,18 @@ public:
     return objects.end();
   }
 
+  inline TokenIter getTokensStart() {
+    return objects.begin();
+  }
+  inline TokenIter getTokensEnd() {
+    return objects.end();
+  }
   void createPlans();
   void drawTile(int, int) const;
   void draw(int,int) const;
 };
 
 Level loadLevel(const char* level_file);
+void saveLevel(const Level& level);
 
 #endif
