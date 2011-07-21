@@ -6,7 +6,7 @@
 #include "animation.h"
 #include "debug.h"
 
-class GameState;
+struct GameState;
 class GameObject {
  protected:
   GameState* gamestate;

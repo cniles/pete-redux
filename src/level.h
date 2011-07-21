@@ -43,11 +43,11 @@ public:
   inline int getLength() const { return length; }
   inline int getHeight() const { return height; }
   inline int getTile(int x, int y) const { return (x>=0 && x < tiles.size() && y >=0 && y < 10 )?tiles[x][y] : -1;}
-  inline int setTile(int x, int y, int id) { tiles[x][y] = id; }
+  inline void setTile(int x, int y, int id) { tiles[x][y] = id; }
 
   TokenIter getObjectAt(int, int);
 
-  inline int addObject(GameObjectToken object) { objects.push_back(object); }
+  inline void addObject(GameObjectToken object) { objects.push_back(object); }
   GameObjectToken getObject(int id);
   
   void removeObject(TokenIter);
