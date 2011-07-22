@@ -9,7 +9,7 @@ FlipNumber::FlipNumber(float x, float y, unsigned int value, int digits)
 
 void FlipNumber::draw() {
   unsigned int temp = value;
-  int numbers[digits];
+  int* numbers = new int[digits];
 
 
   for(int i = 1; i <= digits; i++) {
@@ -26,6 +26,7 @@ void FlipNumber::draw() {
     drawQuad();
     glPopMatrix();
   }
+  delete[](numbers);
 }
 
 void FlipNumber::loadStaticAssets() {
