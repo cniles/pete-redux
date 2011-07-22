@@ -253,7 +253,7 @@ void run() {
   }
 }
 
-int main() {
+int main(int argc, char* argv[]) {
   initSDL();
   initGL();
   std::cout << "pete-redux v0.2" << std::endl;
