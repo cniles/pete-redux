@@ -1,6 +1,14 @@
 #include "darkchampion.h"
 #include "gamestate.h"
 
+const float DarkChampion::VIEW_RANGE = 5.0f;
+const float DarkChampion::ATTACK_RANGE = 0.5f;
+const float DarkChampion::ATTACK_COOLDOWN = 1.0f;
+const float DarkChampion::STUNNED_COOLDOWN = 1.0f;
+const float DarkChampion::MAX_HANG_TIME = 3.0f;
+const float MOVE_EPS = 0.1f;
+const float CHASE_COOLDOWN = 0.25f;
+
 Animation DarkChampion::animation;
 
 void DarkChampion::StateIdle::onEnter() {}
