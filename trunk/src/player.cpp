@@ -109,6 +109,11 @@ void Player::handleKeyStates(const KeyStates& key_states) {
   
 };
 
+void Player::sync(const Player* player) {
+  ammo = player->ammo;
+  health = player->health;
+}
+
 void Player::update(Uint32 dt, const KeyStates& key_states) {
   calcIsOnGround();
   calcHitHead();

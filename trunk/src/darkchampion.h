@@ -8,8 +8,11 @@ class DarkChampion : public StateMachineObject {
   const static int SWINGING = 1;
   const static int INITIAL_HEALTH = 5;
   const static int DAMAGE = 5;
+  const static float CHARGE_SPEED;
+  const static float MOVE_SPEED;
   const static float VIEW_RANGE;
   const static float ATTACK_RANGE;
+  const static float BREAK_ATTACK_RANGE;
   const static float ATTACK_COOLDOWN;
   const static float STUNNED_COOLDOWN;
   const static float MAX_HANG_TIME;

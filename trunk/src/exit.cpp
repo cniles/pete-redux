@@ -8,6 +8,7 @@ CollisionScheme Exit::exit_collision_scheme(COL_ENEMY, COL_LEVEL, btScalar(0.0f)
 
 Exit::Exit(GameState* gamestate, const btVector3& position) 
   : PhysicsObject(gamestate, position, &animation, exit_collision_scheme) {
+  changeDirection();
 }
 
 Exit::~Exit () {

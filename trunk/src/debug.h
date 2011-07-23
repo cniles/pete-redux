@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-//#define DEBUG
+#define DEBUG
 //#define AI_DEBUG
 
 #ifdef DEBUG

@@ -25,7 +25,7 @@ int screen_width = 640;
 int screen_height = 480;
 int screen_bpp = 32;
 
-const char* LEVEL_FILES[] = { "levels/level1.txt", "levels/level2.txt", "levels/level3.txt", "level4.txt", "level5.txt", "level6.txt" };
+const char* LEVEL_FILES[] = { "levels/aitest.txt", "levels/level1.txt", "levels/level2.txt", "levels/level3.txt", "level4.txt", "level5.txt", "level6.txt" };
 const char* BACKGROUND_IMAGE_FILE_NAME = "gfx/background.png";
 GLuint background;
 
@@ -240,9 +240,12 @@ void run() {
       draw(*gamestate);
 
       if(gamestate->exit_toggled) {
-	current_level++;
-	delete(gamestate);
+	current_level++;	
+	GameState* temp = gamestate;
 	gamestate = new GameState(loadLevel(LEVEL_FILES[current_level]));
+	gamestate->player->sync(temp->player);
+	delete(temp);
+
         editor.setLevel(gamestate->level);
       }
     }

@@ -207,9 +207,11 @@ void Editor::draw() {
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
   if(hide_level) {
+    glEnable(GL_BLEND);
     glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
   }
   level.draw(0,12); 
+  glDisable(GL_BLEND);
 
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
