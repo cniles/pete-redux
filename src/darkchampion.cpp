@@ -2,12 +2,15 @@
 #include "gamestate.h"
 
 const float DarkChampion::VIEW_RANGE = 5.0f;
-const float DarkChampion::ATTACK_RANGE = 0.5f;
+const float DarkChampion::ATTACK_RANGE = 0.45f;
+const float DarkChampion::BREAK_ATTACK_RANGE = 0.75hhhhf;
 const float DarkChampion::ATTACK_COOLDOWN = 1.0f;
 const float DarkChampion::STUNNED_COOLDOWN = 1.0f;
+const float DarkChampion::CHARGE_SPEED = 1.2f;
 const float DarkChampion::MAX_HANG_TIME = 3.0f;
-const float MOVE_EPS = 0.1f;
-const float CHASE_COOLDOWN = 0.25f;
+const float DarkChampion::MOVE_EPS = 0.1f;
+const float DarkChampion::CHASE_COOLDOWN = 0.25f;
+const float DarkChampion::MOVE_SPEED = 0.8f;
 
 Animation DarkChampion::animation;
 
@@ -31,10 +34,10 @@ void DarkChampion::StateMoving::onEnter() {
     }
   }
 }
-
 void DarkChampion::StateMoving::onUpdate(float dt) {
   // Check if object is near it's destination & turn it around if so
   const static float in_range_eps = 0.1f;
+  btVector3 linear_velocity = owner->getRigidBody()->getLinearVelocity();
   btVector3 current_position = owner->getPosition();
   owner->hung = false;
   if((owner->previous_position - current_position).length() <= 0.01f) {
@@ -62,9 +65,8 @@ void DarkChampion::StateMoving::onUpdate(float dt) {
   if(owner->lookForPlayer(btVector3(owner->getDirection() * VIEW_RANGE, 0, 0))) {
     owner->changeState(new DarkChampion::StateAttack(owner));
   }
-  btVector3 force(owner->getDirection(), 0.0f, 0.0f);
-  force = force * 3;
-  owner->getRigidBody()->applyCentralForce(force);
+  linear_velocity.setX(owner->getDirection() * DarkChampion::MOVE_SPEED);
+  owner->getRigidBody()->setLinearVelocity(linear_velocity);
 }
 void DarkChampion::StateMoving::onLeave() {}
 
@@ -78,20 +80,24 @@ void DarkChampion::StateAttack::onEnter() {
   owner->substate = CHARGING;
 }
 void DarkChampion::StateAttack::onUpdate(float dt) {
+  btVector3 linear_velocity = owner->getRigidBody()->getLinearVelocity();
   switch(owner->substate) {
   case(CHARGING):
     {
-      btVector3 force(owner->getDirection(), 0.0f, 0.0f);
-      force = force * 5;
-      owner->getRigidBody()->applyCentralForce(force);
       if(!owner->lookForPlayer(btVector3(owner->getDirection() * VIEW_RANGE, 0, 0))) {
 	owner->changeState(new DarkChampion::StateMoving(owner));
-	return;		
+	return;
       }
       else if(owner->lookForPlayer(btVector3(owner->getDirection() * ATTACK_RANGE, 0, 0))) {
 	owner->animation_timer.setClip(1);
 	owner->substate = SWINGING;  
-      }      
+      }
+      else if(owner->atPlatformEnd()) {	
+	linear_velocity.setX(0.0f);
+      }
+      else {
+	linear_velocity.setX(owner->getDirection() * CHARGE_SPEED);
+      }
     break;
     }
   case(SWINGING):
@@ -99,10 +105,14 @@ void DarkChampion::StateAttack::onUpdate(float dt) {
       if(!owner->lookForPlayer(btVector3(owner->getDirection() * ATTACK_RANGE, 0, 0))) {
 	owner->animation_timer.setClip(3);
 	owner->substate = CHARGING;
-      }    
+      }
+      else {
+        linear_velocity.setX(0.0f);
+      }
       break;
     }
   }
+  owner->getRigidBody()->setLinearVelocity(linear_velocity);
 }
 void DarkChampion::StateAttack::onLeave() {}
 

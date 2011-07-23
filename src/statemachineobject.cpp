@@ -32,6 +32,21 @@ btVector3 StateMachineObject::getFurthestFacingPointOnPlatform() {
   return btVector3(x + 0.5f, origin_y + 0.5f, 0);
 }
 
+bool StateMachineObject::atPlatformEnd() const {
+  Level* level = &(gamestate->level);
+  float origin_x = position.getX();
+  float origin_y = position.getY(); 
+  float stop_x = (int)origin_x + 0.5f;
+  float stop_y = (int)origin_y + 0.5f;
+  int next_x = origin_x + direction;
+  if(level->getTile(next_x, origin_y -1) == 0 &&
+     origin_x - stop_x < 0.01f &&
+     origin_y - stop_y < 0.01f) {
+    return true;
+  }
+  return false;
+}
+
 void StateMachineObject::changeState(State* new_state) {
   State* temp = current_state;
   if(current_state) {
@@ -62,7 +77,7 @@ float StateMachineObject::getDistance2ToPlayer() {
 }
 
 bool StateMachineObject::lookForPlayer(const btVector3& direction) {
-  btVector3& new_direction = position;
+  btVector3 new_direction = direction + position;
   btCollisionWorld::ClosestRayResultCallback callback(position, new_direction);
   callback.m_collisionFilterGroup = COL_ENEMY;
   callback.m_collisionFilterMask = COL_PLAYER | COL_LEVEL; // can see through other enemies

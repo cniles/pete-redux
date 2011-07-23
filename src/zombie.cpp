@@ -3,9 +3,12 @@
 #include "zombie.h"
 #include "gamestate.h"
 
+// TODO: Make zombies chase player and be able to hop up and down on tiles
+
 const float Zombie::ATTACK_COOLDOWN = 0.5f;
 const float Zombie::MOVE_EPS = 0.1f;
 const float Zombie::CHASE_COOLDOWN = 0.25f;
+const float Zombie::WALK_SPEED = 1.0f;
 
 Animation Zombie::animation = Animation();
 
@@ -65,13 +68,14 @@ void Zombie::StateMoving::onUpdate(float dt) {
       owner->gamestate->player->takeDamage(ZOMBIE_DAMAGE,0);
     }
   }
+  // Chase needs to work correctly first...
   /*  if(owner->getDistance2ToPlayer() <= 9.0f) {
     owner->changeState(new Zombie::StateChase(owner));
     }*/
-  // Nudge the object in the correct direction.
-  btVector3 force(owner->getDirection(), 0.0f, 0.0f);
-  force = force * 3;
-  owner->getRigidBody()->applyCentralForce(force);
+
+  // Kinematic
+  btVector3 force(owner->getDirection() * Zombie::WALK_SPEED, 0.0f, 0.0f);  
+  owner->getRigidBody()->setLinearVelocity(force);
 }
 void Zombie::StateMoving::onLeave() {}
 

@@ -66,6 +66,7 @@ class Player {
   void increaseAmmo(int);
   void takeDamage(int,int);
   void increaseHealth(int);
+  void sync(const Player* player);
   int getHealth() { return health; }
   int getAmmo() { return ammo; }
   inline void setPosition(const btTransform& position) { this->position = position; }
