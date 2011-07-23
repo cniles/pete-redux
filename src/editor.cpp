@@ -16,7 +16,7 @@ void updateMouseWorldCoordinates(MousePosition& mouse);
 std::map<int, GLuint> Editor::token_textures;
 
 Editor::Editor(Level level)
-  : camera_x(0), camera_y(0), tile_type(1), object_type(0), dragging(false), level(level), mode(TILE) {
+  : camera_x(0), camera_y(0), tile_type(1), object_type(0), dragging(false), level(level), mode(TILE), hide_level(false) {
 }
 
 void Editor::update() {
@@ -31,6 +31,11 @@ void Editor::update() {
 void Editor::handleEvent(const SDL_Event& event) {
   switch(event.type) {
   case(SDL_KEYDOWN):
+    switch(event.key.keysym.sym) {
+    case(SDLK_h):
+      hide_level = true;
+      break;
+    }
     break;
   case(SDL_KEYUP):
     switch(event.key.keysym.sym) {
@@ -59,6 +64,9 @@ void Editor::handleEvent(const SDL_Event& event) {
       break;
     case(SDLK_F9): 
       flipTokens();
+      break;
+    case(SDLK_h):
+      hide_level = false;
       break;
     };
     break;
@@ -138,6 +146,9 @@ void updateMouseWorldCoordinates(MousePosition &mouse) {
 }
 
 void Editor::drawTokens() const {
+  if(hide_level) {
+    glDisable(GL_DEPTH_TEST);
+  }
     std::vector<GameObjectToken>::const_iterator token_iter = level.getTokensStart();
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glAlphaFunc(GL_GREATER, 0.1f);
@@ -153,6 +164,7 @@ void Editor::drawTokens() const {
     }
     glDisable(GL_ALPHA_TEST);
     glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
 }
 
 void Editor::draw() {
@@ -194,7 +206,12 @@ void Editor::draw() {
 
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
+  if(hide_level) {
+    glColor4f(1.0f, 1.0f, 1.0f, 0.25f);
+  }
   level.draw(0,12); 
+
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
   updateMouseWorldCoordinates(mouse);
 

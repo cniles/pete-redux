@@ -25,6 +25,7 @@ struct Editor {
   int mode;  
  
   bool dragging;
+  bool hide_level;
 
   MousePosition mouse;
 
