@@ -3,7 +3,7 @@
 
 const float DarkChampion::VIEW_RANGE = 5.0f;
 const float DarkChampion::ATTACK_RANGE = 0.45f;
-const float DarkChampion::BREAK_ATTACK_RANGE = 0.75hhhhf;
+const float DarkChampion::BREAK_ATTACK_RANGE = 0.7f;
 const float DarkChampion::ATTACK_COOLDOWN = 1.0f;
 const float DarkChampion::STUNNED_COOLDOWN = 1.0f;
 const float DarkChampion::CHARGE_SPEED = 1.2f;
