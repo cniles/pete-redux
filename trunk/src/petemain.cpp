@@ -18,6 +18,7 @@
 #include "draw.h"
 #include "flipnumber.h"
 #include "editor.h"
+#include "textwriter.h"
 
 #include "objecttypes.h"
 
@@ -116,7 +117,7 @@ void draw(const GameState& gamestate) {
 
   drawBackground();
 
-  glPushMatrix();   
+  glPushMatrix();
   glTranslatef(-gamestate.player->getX(), -gamestate.player->getY(), -10.0f);
 
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -145,7 +146,8 @@ void draw(const GameState& gamestate) {
 
   health.draw();
   ammo.draw();
-  
+ 
+  textwriter::write_text("pete-redux", 10, 460, 1.0f, 1.0f, 1.0f, 1.0f);
 
   SDL_GL_SwapBuffers();
 }
@@ -190,6 +192,8 @@ void run() {
 
   KeyStates key_states;
   
+  unsigned int font = textwriter::load_font("fonts/soulstalker.otf", "", 32, 40);
+  textwriter::set_font(font);
   while(!quit) {
     stop = SDL_GetTicks();
     if(start != 0) {
@@ -250,7 +254,7 @@ void run() {
         editor.setLevel(gamestate->level);
       }
     }
-    if(mode == EDIT) {      
+    if(mode == EDIT) {     
       editor.update();
       editor.draw();
     }
@@ -260,6 +264,7 @@ void run() {
 int main(int argc, char* argv[]) {
   initSDL();
   initGL();
+  textwriter::init_textwriter(screen_width, screen_height);
   std::cout << "pete-redux v0.2" << std::endl;
   loadStaticAssets();
   background = loadTexture(BACKGROUND_IMAGE_FILE_NAME);
