@@ -91,3 +91,10 @@ bool StateMachineObject::lookForPlayer(const btVector3& direction) {
   }  
   return false;
 }
+
+bool StateMachineObject::isWalkableTile(int x, int y, const Level& level) {
+  if(level.getTile(x,y)==0 && level.getTile(x, y-1)==0) {
+    return true; 
+  }
+  return false;
+}

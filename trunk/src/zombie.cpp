@@ -112,25 +112,19 @@ void Zombie::loadStaticAssets() {
   animation = Animation("gfx/zombie");
 }
 
-bool isValidTile(int x, int y, Level& level) {
-  if(level.getTile(x,y)==0 && level.getTile(x, y-1)==0) {
-    return true; 
-  }
-  return false;
-}
 
 btVector3 Zombie::getChaseDestination() {
   int x = position.getX();
   int y = position.getY();
   
-  if(isValidTile(x+direction, y, gamestate->level)) {
+  if(isWalkableTile(x+direction, y, gamestate->level)) {
     x += direction;
   }
-  else if(isValidTile(x+direction, y-1, gamestate->level)) {
+  else if(isWalkableTile(x+direction, y-1, gamestate->level)) {
     x += direction;
     y -= 1;
   }
-  else if(isValidTile(x+direction, y+1, gamestate->level)) {
+  else if(isWalkableTile(x+direction, y+1, gamestate->level)) {
     x += direction;
     y += 1;
   }

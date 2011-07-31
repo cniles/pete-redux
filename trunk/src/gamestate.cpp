@@ -38,6 +38,10 @@ GameState::GameState(Level level)
       DEBUG_OUT("New DarkChampion");
       objects.push_back(new DarkChampion(this, position));
       break;
+    case 4:
+      DEBUG_OUT("New Soldier");
+      objects.push_back(new Soldier(this, position));
+      break;
     case 21:
       DEBUG_OUT("New Exit");
       objects.push_back(new Exit(this, position));
