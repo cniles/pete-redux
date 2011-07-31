@@ -261,13 +261,11 @@ void Editor::loadStaticAssets() {
   GLuint texture;
   std::string image_name;
   while((token_file >> id >> image_name).good()) {
-    std::cerr << "Loading " << id << " " << image_name << "...";
     SDL_Surface* image = IMG_Load(image_name.c_str());
     texture = getGLTexture(image);
     SDL_FreeSurface(image);
     token_textures.insert(std::pair<int, GLuint>(id, texture));
   }
-  std::cerr << "Loaded " << token_textures.size() << " token images" << std::endl;
 }
 
 void Editor::flipTokens() {
