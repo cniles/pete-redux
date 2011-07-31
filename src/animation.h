@@ -22,6 +22,8 @@ class Animation {
 public:
   Animation();
   Animation(const char* fname);
+  inline int getWidth() const { return frame_width; }
+  inline int getHeight() const { return frame_height; }
   inline int getFrame(int clip, int frame) const { return clips[clip].frames[frame]; }
   inline int getDuration(int clip) { return clips[clip].frame_duration; }
   inline int getFrameCount(int clip) { return clips[clip].frame_count; }

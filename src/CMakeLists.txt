@@ -8,7 +8,7 @@ add_library(BaseCode animation.cpp gameobject.cpp physicsobject.cpp
 		     level.cpp texture.cpp tileset.cpp editor.cpp)
 
 add_library(ClientCode player.cpp zombie.cpp bat.cpp soul.cpp darkchampion.cpp
- 		       ammo.cpp medpack.cpp flipnumber.cpp exit.cpp)
+ 		       ammo.cpp medpack.cpp flipnumber.cpp exit.cpp soldier.cpp)
 
 target_link_libraries(ClientCode BaseCode)
 

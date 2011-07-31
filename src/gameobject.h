@@ -11,6 +11,7 @@ class GameObject {
  protected:
   GameState* gamestate;
   AnimationTimer animation_timer;
+  Animation* animation;
 
   bool disable_draw;
 

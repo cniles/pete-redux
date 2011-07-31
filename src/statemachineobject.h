@@ -1,6 +1,7 @@
 #ifndef STATEMACHINEOBJECT_H_
 #define STATEMACHINEOBJECT_H_
 
+#include "level.h"
 #include "physicsobject.h"
 
 class StateMachineObject;
@@ -36,6 +37,7 @@ class StateMachineObject : public PhysicsObject {
   void update(float dt);
  public:
   void changeState(State* new_state);
+  bool isWalkableTile(int, int, const Level&); 
   btVector3 getFurthestFacingPointOnPlatform();
   float getDistance2ToPlayer();
   bool atPlatformEnd() const;

@@ -18,9 +18,6 @@ void DarkChampion::StateIdle::onEnter() {}
 void DarkChampion::StateIdle::onUpdate(float dt) {}
 void DarkChampion::StateIdle::onLeave() {}
 
-
-
-
 void DarkChampion::StateMoving::onEnter() {
   owner->animation_timer.setClip(0);
   owner->destination = owner->getFurthestFacingPointOnPlatform();

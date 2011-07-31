@@ -48,6 +48,7 @@ void loadStaticAssets() {
   Ammo::loadStaticAssets();
   Exit::loadStaticAssets();
   Medpack::loadStaticAssets();
+  Soldier::loadStaticAssets();
 
   FlipNumber::loadStaticAssets();
   Editor::loadStaticAssets();
