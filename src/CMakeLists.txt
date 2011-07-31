@@ -3,7 +3,7 @@
 #	       "${PROJECT_BINARY_DIR}/src/peteconfig.h"
 #)
 
-add_library(BaseCode animation.cpp shader.cpp gameobject.cpp physicsobject.cpp
+add_library(BaseCode animation.cpp gameobject.cpp physicsobject.cpp
 		     statemachineobject.cpp bullet.cpp gamestate.cpp 
 		     level.cpp texture.cpp tileset.cpp editor.cpp textwriter.cpp)
 
