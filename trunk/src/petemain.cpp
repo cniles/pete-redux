@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <GL/glew.h>
+
+#define NO_SDL_GLEXT
+
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 #include <SDL/SDL_image.h>
@@ -264,6 +268,7 @@ void run() {
 int main(int argc, char* argv[]) {
   initSDL();
   initGL();
+  glewInit();
   textwriter::init_textwriter(screen_width, screen_height);
   std::cout << "pete-redux v0.2" << std::endl;
   loadStaticAssets();

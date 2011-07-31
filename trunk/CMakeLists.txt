@@ -9,8 +9,7 @@ if(WIN32)
 elseif(UNIX)
 	include_directories("/usr/local/include/bullet" "/usr/include/freetype2")
 	set (EXTRA_LIBS ${EXTRA_LIBS} BaseCode ClientCode SDL SDL_image GLU GL
-	GLee freetype
-	BulletDynamics BulletCollision LinearMath)
+	GLEW freetype BulletDynamics BulletCollision LinearMath)
 endif()
 
 

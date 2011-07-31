@@ -11,14 +11,15 @@
 #ifndef TEXTWRITER_H_
 #define TEXTWRITER_H_
 
+#include <SDL/SDL_opengl.h>
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 
+#include <string>
 #include <vector>
 #include <map>
-
-#include "shader.h"
 
 namespace textwriter
 {
@@ -48,7 +49,6 @@ namespace textwriter
 		GLuint shader_projection_loc;
 		GLuint shader_color_loc;
 		GLuint shader_texture_loc;
-		Shader *p;
 		std::string fontname;
 		unsigned int current_font;
 		int screenw, screenh;
