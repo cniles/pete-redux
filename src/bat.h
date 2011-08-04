@@ -2,7 +2,10 @@
 #define BAT_H_
 
 #include <BulletCollision/CollisionShapes/btBox2dShape.h>
+#include <stack>
 #include "statemachineobject.h"
+
+class PathNode;
 
 class Bat : public StateMachineObject {
   const static int INITIAL_HEALTH = 1;
@@ -26,6 +29,8 @@ class Bat : public StateMachineObject {
   int health;
   bool can_attack;
   float attack_timer;
+
+  std::stack<PathNode*> path;
 
   btVector3 getRandomMove();
 
