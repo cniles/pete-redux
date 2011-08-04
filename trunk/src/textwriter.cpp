@@ -17,7 +17,6 @@ namespace textwriter
   {
     screenw = _screenw;
     screenh = _screenh;
-    std::cerr << "Init textwriter..." << std::endl;
     fontname = "NULL";
     return false;
   }

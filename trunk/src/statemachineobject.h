@@ -24,7 +24,8 @@ class State {
     void onEnter();							\
     void onUpdate(float);						\
     void onLeave();							\
-  };
+  };                                                                    \
+  friend class STATE_NAME;
   
 class StateMachineObject : public PhysicsObject {
  private:

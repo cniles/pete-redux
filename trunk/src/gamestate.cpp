@@ -7,17 +7,20 @@
 
 GameState::GameState(Level level)
   : level(level), exit_toggled(false) {
-  std::cerr << "Initializing dynamics world...";
+  std::cerr << "Gamestate starting..." << std::endl;
+  pathgraph = new PathGraph(level);
+
+  //std::cerr << "Initializing dynamics world...";
   bullet_core = createPhysicsWorld();
   dynamics_world = bullet_core->dynamics_world;
-  std::cerr << "Successfully created dynamics world." << std::endl;
+  //std::cerr << "Successfully created dynamics world." << std::endl;
 
-  std::cerr << "Initializing player...";
+  //std::cerr << "Initializing player...";
   GameObjectToken player_position = level.getObject(30);
   player = new Player(player_position.x, player_position.y, this);
-  std::cerr << "Successfully initialzed player." << std::endl;
+  //std::cerr << "Successfully initialzed player." << std::endl;
 
-  std::cerr << "Initializing game objects...";
+  //std::cerr << "Initializing game objects...";
   TokenList::const_iterator token_iter = level.getTokensStart();
   while(token_iter != level.getTokensEnd()) {
     btVector3 position(token_iter->x + 0.5f, token_iter->y + 0.5f, 0.0f);
@@ -57,9 +60,9 @@ GameState::GameState(Level level)
     }
     token_iter++;
   }
-  std::cerr << "Successfully initialized game objects." << std::endl;
+  //std::cerr << "Successfully initialized game objects." << std::endl;
 
-  std::cerr << "Initializing level physics...";
+  //std::cerr << "Initializing level physics...";
   for(int y = 0; y < 10; y++) {
     int x = 0;
     while(x < level.getLength()) {
@@ -90,11 +93,12 @@ GameState::GameState(Level level)
       }
     }
   }
-  std::cerr << "Successfully initialized level physics." << std::endl;
+  //std::cerr << "Successfully initialized level physics." << std::endl;
 }
 
 GameState::~GameState() {
   delete player;
+  delete pathgraph;
   for(int i = 0; i < objects.size(); i++) {
     delete objects[i];
   }

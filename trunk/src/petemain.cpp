@@ -114,7 +114,33 @@ inline void drawBackground() {
   glPopMatrix();
 }
 
-void draw(const GameState& gamestate) {  
+void drawPathGraph(PathGraph* pathgraph) {
+  const PathNode* graph = pathgraph->getGraph();
+  int graph_size = pathgraph->getGraphSize();
+
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_TEXTURE_2D);
+  glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+  glPushMatrix();
+  glTranslatef(0.5f, 0.5f, -0.5f);
+
+  for(int i = 0; i < graph_size; i++) {
+    const PathNode* node = &graph[i];
+    for(int j = 0; j < graph[i].dij_num_children; j++) {
+      const PathNode* child = graph[i].children[j];
+      if(child->x_pos < 0 || child->x_pos > 100 || child->y_pos < 0 || child->y_pos > 100) continue;
+      glBegin(GL_LINES);
+      glVertex2f(node->x_pos, node->y_pos);
+      glVertex2f(child->x_pos, child->y_pos);
+      glEnd();
+    }
+  }
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_DEPTH_TEST);
+  glPopMatrix();
+}
+
+void draw(GameState& gamestate) {  
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   reshapePerspective();
   glLoadIdentity();
@@ -139,7 +165,11 @@ void draw(const GameState& gamestate) {
       (*object_iter)->draw();
       object_iter++;
   }  
+
+  //drawPathGraph(gamestate.pathgraph);
+
   glPopMatrix();
+
   glDisable(GL_BLEND);
   glDisable(GL_ALPHA_TEST);
 
