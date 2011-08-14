@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <map>
 
@@ -140,7 +141,7 @@ void drawPathGraph(PathGraph* pathgraph) {
   glPopMatrix();
 }
 
-void draw(GameState& gamestate) {  
+void draw(GameState& gamestate, int fps) {  
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   reshapePerspective();
   glLoadIdentity();
@@ -181,7 +182,11 @@ void draw(GameState& gamestate) {
   health.draw();
   ammo.draw();
  
+  std::stringstream sstr;
+  sstr << "fps: " << fps;
+
   textwriter::write_text("pete-redux", 10, 460, 1.0f, 1.0f, 1.0f, 1.0f);
+  textwriter::write_text(sstr.str(), 10, 10, 1.0f, 1.0f, 1.0f, 1.0f);
 
   SDL_GL_SwapBuffers();
 }
@@ -219,6 +224,10 @@ void run() {
   Uint32 elapsed = 0;
   SDL_Event event;
   bool quit = false;
+  
+  int fps = 0;
+  int frames = 0;
+  int fps_timer;
 
   srand(time(NULL));
   Editor editor(loadLevel(LEVEL_FILES[current_level])); 
@@ -276,8 +285,17 @@ void run() {
 	object_iter++;
       }
 
-      draw(*gamestate);
+      fps_timer += elapsed;
 
+      if(fps_timer >= 1000) {
+	fps = frames;
+	frames = 0;
+	fps_timer = 0;
+      }
+
+      draw(*gamestate, fps);
+      frames++;           
+      
       if(gamestate->exit_toggled) {
 	current_level++;	
 	GameState* temp = gamestate;
