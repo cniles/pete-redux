@@ -67,20 +67,14 @@ void Bat::StateAttack::onEnter() {
   }
 }
 void Bat::StateAttack::onUpdate(float dt) {
-  
-  std::cerr << "Fail 1" << std::endl;
   btVector3 path_position(owner->path.top()->x_pos + 0.5f, owner->path.top()->y_pos + 0.5f, 0.0f);
-  std::cerr << "Fail 2" << std::endl;
   if((path_position - owner->position).length() < 0.1f) {
     owner->path.pop();
-    std::cerr << "Fail 3" << std::endl;
-    std::cerr << "Fail 5" << std::endl;
     if(owner->path.empty() || owner->path.top() == NULL) {
       owner->changeState(new Bat::StateMove(owner));
       return;
     }
   }
-  std::cerr << "Fail 4" << std::endl;
   btVector3 velocity = path_position - owner->position;
   velocity.normalize();
   owner->rigid_body->setLinearVelocity(velocity);

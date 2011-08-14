@@ -8,6 +8,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include <GL/glew.h>
 #define NO_SDL_GLEXT
+#include <cmath>
 #include "textwriter.h"
 #include "debug.h"
 
@@ -21,8 +22,17 @@ namespace textwriter
     return false;
   }
 
-  unsigned int load_font(std::string filename, std::string fontname, int width, int height)
+  int charRowPos(int c, int cr) {
+    return (int)(c / cr);
+  }
+  int charColPos(int c, int cr) {
+    return c % cr;
+  }
+
+ unsigned int load_font(std::string filename, std::string fontname, int width, int height)
   {
+    int o_width = width;
+    int o_height = height;
     std::vector<GLubyte> rgbpixels;
     FT_Library ft_lib;
     FT_Face ft_face;
@@ -51,11 +61,38 @@ namespace textwriter
 	return 0;
       }	
 
+    new_tf.font_texture_size = std::sqrt(128 * width * height);
+    new_tf.font_texture_size--;
+    new_tf.font_texture_size |= new_tf.font_texture_size >> 1;
+    new_tf.font_texture_size |= new_tf.font_texture_size >> 2;
+    new_tf.font_texture_size |= new_tf.font_texture_size >> 4;
+    new_tf.font_texture_size |= new_tf.font_texture_size >> 8;
+    new_tf.font_texture_size |= new_tf.font_texture_size >> 16;
+    new_tf.font_texture_size++;
+
+    static GLubyte *font_image = new GLubyte[new_tf.font_texture_size * new_tf.font_texture_size * 4];
+    
+    for(int i = 0; i < new_tf.font_texture_size; i++) {
+      for(int j = 0; j < new_tf.font_texture_size; j++) {
+	font_image[i*new_tf.font_texture_size+j+0] = 0;
+	font_image[i*new_tf.font_texture_size+j+1] = 0;
+	font_image[i*new_tf.font_texture_size+j+2] = 0;
+	font_image[i*new_tf.font_texture_size+j+3] = 0;
+      }
+    }
+
+    glGenTextures(1,&new_tf.font_texture);
+    glBindTexture(GL_TEXTURE_2D,new_tf.font_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, new_tf.font_texture_size,new_tf.font_texture_size, 0, GL_RGBA, GL_UNSIGNED_BYTE, font_image);
+    delete[](font_image);
+
     width = width * 64;
     height = height * 64;
 
     FT_Set_Char_Size(ft_face, width, height, 0, 0);
-
+    
     for(unsigned char i = 0; i < 128; i++)
       {
 	char_index = FT_Get_Char_Index(ft_face, i);
@@ -80,6 +117,7 @@ namespace textwriter
 
 	new_tc.width = (ft_bmp->bitmap.width)? ft_bmp->bitmap.width : 16;
 	new_tc.height = (ft_bmp->bitmap.rows)? ft_bmp->bitmap.rows: 16;
+	//std::cerr << "tc w/h: " << new_tc.width << " " << new_tc.height << std::endl;
 	new_tc.left = ft_bmp->left;
 	new_tc.top = ft_bmp->top;
 	new_tc.advance = ft_bmp->root.advance.x>>16;
@@ -104,11 +142,34 @@ namespace textwriter
 	      }
 	  }
 
-	glGenTextures(1,&new_tc.handle);
+	/*glGenTextures(1,&new_tc.handle);
 	glBindTexture(GL_TEXTURE_2D,new_tc.handle);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, new_tc.width,new_tc.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &rgbpixels[0]);
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, new_tc.width,new_tc.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &rgbpixels[0]);*/
+
+	int cr = int(new_tf.font_texture_size / o_width);
+	GLint x_offset = charColPos(i, cr) * o_width;
+	GLint y_offset = charRowPos(i, cr) * o_height;
+
+	glBindTexture(GL_TEXTURE_2D, new_tf.font_texture);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, x_offset, y_offset, new_tc.width, new_tc.height, GL_RGBA, GL_UNSIGNED_BYTE, &rgbpixels[0]);
+
+	glGenBuffers(1, &new_tc.tex_coor_buffer);
+ 	glBindBuffer(GL_ARRAY_BUFFER, new_tc.tex_coor_buffer);
+	GLfloat size = new_tf.font_texture_size;
+
+	GLfloat tex_coors[8];
+	tex_coors[0] = x_offset / size;
+	tex_coors[1] = (y_offset + new_tc.height) / size;
+	tex_coors[2] = (x_offset + new_tc.width) / size;
+	tex_coors[3] = (y_offset + new_tc.height) / size;
+	tex_coors[4] = (x_offset + new_tc.width) / size;
+	tex_coors[5] = y_offset / size;
+	tex_coors[6] = x_offset / size;
+	tex_coors[7] = y_offset / size;
+	
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*8, tex_coors, GL_DYNAMIC_DRAW);
 
 	new_tf.characters[(char)i] = new_tc;
 	FT_Done_Glyph(ft_glyph);
@@ -121,7 +182,6 @@ namespace textwriter
     FT_Done_Face(ft_face);
     FT_Done_FreeType(ft_lib);
 
-    glGenBuffers(1, &tex_coor_buffer);
     glGenBuffers(1, &vertex_buffer);
 
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
@@ -131,14 +191,6 @@ namespace textwriter
        1.0f, 1.0f,
        0.0f, 1.0f};
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*8, vertices, GL_DYNAMIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, tex_coor_buffer);
-    GLfloat tex_coors[] = 
-      {0.0f, 1.0f,
-       1.0f, 1.0f,
-       1.0f, 0.0f,
-       0.0f, 0.0f};
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*8, tex_coors, GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -218,6 +270,8 @@ namespace textwriter
     glTranslatef(x, y, 0);
     glGetFloatv(GL_PROJECTION_MATRIX, projection);
 
+    glBindTexture(GL_TEXTURE_2D, tf->font_texture);
+
     for( int i = 0; i < s.size(); i++)
       {
 	tc = &tf->characters[s[i]];
@@ -228,12 +282,10 @@ namespace textwriter
 	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
 	glUniformMatrix4fv(shader_modelview_loc, 1, GL_FALSE, modelview);
 
-	glBindTexture(GL_TEXTURE_2D, tc->handle);
-
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 	glVertexPointer(2, GL_FLOAT, 0, (char*)NULL);
 
-	glBindBuffer(GL_ARRAY_BUFFER, tex_coor_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, tc->tex_coor_buffer);
 	glTexCoordPointer(2, GL_FLOAT, 0, (char*)NULL);
 
 	glDrawArrays(GL_QUADS, 0, 4);

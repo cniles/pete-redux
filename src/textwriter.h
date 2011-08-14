@@ -30,36 +30,38 @@ namespace textwriter
     int left;
     int top;
     int width;
-    int height;	
-};
+    int height;
+    GLuint tex_coor_buffer;
+  };
 
-	struct texture_font
-	{
-		int height;
-	        std::string fontname;
-	        std::vector<texture_char> characters;
-	};
+  struct texture_font
+  {
+    GLuint font_texture;
+    int font_texture_size;
+    int height;
+    std::string fontname;
+    std::vector<texture_char> characters;
+  };
 
-	namespace
-	{
-	        std::vector<texture_font> fonts;
-		GLuint tex_coor_buffer;
-		GLuint vertex_buffer;
-		GLuint shader_modelview_loc;
-		GLuint shader_projection_loc;
-		GLuint shader_color_loc;
-		GLuint shader_texture_loc;
-		std::string fontname;
-		unsigned int current_font;
-		int screenw, screenh;
-	}
-
-	// initialize the textwriter with the shader program pointer and the screen width and height
-	bool init_textwriter(int _screenw, int _screenh);
-
-	// loads a font from a ttf file.  generates the textures  at specified character size
-	unsigned int load_font(std::string filename, std::string fontname, int width, int height);	
-
+  namespace {
+    std::vector<texture_font> fonts;
+    GLuint tex_coor_buffer;
+    GLuint vertex_buffer;
+    GLuint shader_modelview_loc;
+    GLuint shader_projection_loc;
+    GLuint shader_color_loc;
+    GLuint shader_texture_loc;
+    std::string fontname;
+    unsigned int current_font;
+    int screenw, screenh;
+  }
+  
+  // initialize the textwriter with the shader program pointer and the screen width and height
+  bool init_textwriter(int _screenw, int _screenh);
+  
+  // loads a font from a ttf file.  generates the textures  at specified character size
+  unsigned int load_font(std::string filename, std::string fontname, int width, int height);	
+	
 	// tries to set the current font. if not found, no change are made
 	void set_font(unsigned int font);
 	
