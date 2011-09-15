@@ -4,7 +4,8 @@
 //	Date:			6/20/2010
 //     
 //	Description:	
-//	Modified:		
+//	Modified:		7/31/201 - Fonts now stored in one texture; access individual
+//                          characters through texture coordinates now.
 ///////////////////////////////////////////////////////////////////////////////
 #include <GL/glew.h>
 #define NO_SDL_GLEXT
