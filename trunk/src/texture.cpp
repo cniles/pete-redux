@@ -19,7 +19,7 @@ SDL_Surface* createConvertedSurface(SDL_Surface* original) {
   SDL_Surface* result = SDL_CreateRGBSurface(SDL_SRCALPHA, w, h, BPP, RMASK, GMASK, BMASK, AMASK);
 
   SDL_SetAlpha(original, 0, 0);
-  SDL_SetAlpha(result, 0, 0);
+  //SDL_SetAlpha(result, 0, 0);
 
   SDL_BlitSurface(original, NULL, result, NULL);
   return result;
