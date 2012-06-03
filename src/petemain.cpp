@@ -235,8 +235,9 @@ void run() {
 
   KeyStates key_states;
   
-  unsigned int font = textwriter::load_font("fonts/soulstalker.otf", "", 32, 40);
+  unsigned int font = textwriter::load_font("fonts/LiberationSans.ttf", "", 32, 40);
   textwriter::set_font(font);
+
   while(!quit) {
     stop = SDL_GetTicks();
     if(start != 0) {

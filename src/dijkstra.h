@@ -1,5 +1,4 @@
-/* This function was written by Craig Niles.
- * it is a templated dijkstra search algorithm.
+/* A templated dijkstra search algorithm.
  * It assigns a distance value to all reachable
  * nodes in a graph given the node at index
  * source.

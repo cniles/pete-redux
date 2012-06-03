@@ -149,26 +149,26 @@ void Editor::drawTokens() const {
   if(hide_level) {
     glDisable(GL_DEPTH_TEST);
   }
-    std::vector<GameObjectToken>::const_iterator token_iter = level.getTokensStart();
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glAlphaFunc(GL_GREATER, 0.1f);
-    glEnable(GL_BLEND);
-    glEnable(GL_ALPHA_TEST);
-    while(token_iter != level.getTokensEnd()) {
-      glBindTexture(GL_TEXTURE_2D, token_textures[token_iter->id]);
-      glPushMatrix();
-      glTranslatef(token_iter->x, token_iter->y, -0.5f);
-      drawQuad();
-      glPopMatrix();
-      token_iter++;
-    }
-    glDisable(GL_ALPHA_TEST);
-    glEnable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+  std::vector<GameObjectToken>::const_iterator token_iter = level.getTokensStart();
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glAlphaFunc(GL_GREATER, 0.1f);
+  glEnable(GL_BLEND);
+  glEnable(GL_ALPHA_TEST);
+  while(token_iter != level.getTokensEnd()) {
+    glBindTexture(GL_TEXTURE_2D, token_textures[token_iter->id]);
+    glPushMatrix();
+    glTranslatef(token_iter->x, token_iter->y, -0.5f);
+    drawQuad();
+    glPopMatrix();
+    token_iter++;
+  }
+  glDisable(GL_ALPHA_TEST);
+  glEnable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
 }
 
 void Editor::draw() {
-    glClearColor(0.28f, 0.66f, 0.1f, 1.0f);
+  glClearColor(0.28f, 0.66f, 0.1f, 1.0f);
   GLfloat cube_points[] = {
     0.0f, 0.0f, 0.0f,
     1.0f, 0.0f, 0.0f,
