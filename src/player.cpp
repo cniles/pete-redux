@@ -78,11 +78,13 @@ void Player::applyJumpVelocity() {
 void Player::handleKeyStates(const KeyStates& key_states) {
   float x_acceleration = isOnGround()? PLAYER_ACCELERATION : PLAYER_IN_AIR_ACCELERATION;
   if(key_states.right_held) {
+    rigid_body->activate(true);
     flip_sprite = false;
     direction = 1;
     rigid_body->applyCentralForce(btVector3(x_acceleration, 0.0f, 0.0f));
   }
   else if(key_states.left_held) {
+    rigid_body->activate(true);
     flip_sprite = true;
     direction = -1;
     rigid_body->applyCentralForce(btVector3(-x_acceleration, 0.0f, 0.0f));
