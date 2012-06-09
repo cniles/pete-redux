@@ -4,10 +4,10 @@
 #)
 
 add_library(BaseCode animation.cpp gameobject.cpp pathgraph.cpp physicsobject.cpp
-		     statemachineobject.cpp bullet.cpp gamestate.cpp 
+		     statemachineobject.cpp bullet.cpp gamestate.cpp
 		     level.cpp texture.cpp tileset.cpp editor.cpp textwriter.cpp)
 
-add_library(ClientCode player.cpp zombie.cpp bat.cpp soul.cpp darkchampion.cpp
+add_library(ClientCode player.cpp zombie.cpp bat.cpp soul.cpp darkchampion.cpp monsterfactory.cpp
  		       ammo.cpp medpack.cpp flipnumber.cpp exit.cpp soldier.cpp)
 
 target_link_libraries(ClientCode BaseCode)
