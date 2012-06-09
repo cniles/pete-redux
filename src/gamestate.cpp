@@ -1,3 +1,5 @@
+#include "debug.h"
+
 #include <iostream>
 #include <BulletCollision/CollisionShapes/btBox2dShape.h>
 
@@ -6,20 +8,21 @@
 
 GameState::GameState(Level level)
   : level(level), exit_toggled(false) {
-  std::cerr << "Gamestate starting..." << std::endl;
-  pathgraph = new PathGraph(level);
 
-  //std::cerr << "Initializing dynamics world...";
+  DEBUG_OUT("Gamestate starting...\n");
+  pathgraph = new PathGraph(level);
+  
+  DEBUG_OUT("Initializing dynamics world...\n");
   bullet_core = createPhysicsWorld();
   dynamics_world = bullet_core->dynamics_world;
-  //std::cerr << "Successfully created dynamics world." << std::endl;
+  DEBUG_OUT("Successfully created dynamics world.\n");
 
-  //std::cerr << "Initializing player...";
+  DEBUG_OUT("Initializing player...\n");
   GameObjectToken player_position = level.getObject(30);
   player = new Player(player_position.x, player_position.y, this);
-  //std::cerr << "Successfully initialzed player." << std::endl;
+  DEBUG_OUT("Successfully initialzed player.\n");
 
-  //std::cerr << "Initializing game objects...";
+  DEBUG_OUT("Initializing game objects...\n");
   TokenList::const_iterator token_iter = level.getTokensStart();
   while(token_iter != level.getTokensEnd()) {
     btVector3 position(token_iter->x + 0.5f, token_iter->y + 0.5f, 0.0f);
@@ -29,9 +32,9 @@ GameState::GameState(Level level)
     }
     token_iter++;
   }
-  //std::cerr << "Successfully initialized game objects." << std::endl;
-
-  //std::cerr << "Initializing level physics...";
+  DEBUG_OUT("Successfully initialized game objects.\n");
+	   
+  DEBUG_OUT("Initializing level physics...\n");
   for(int y = 0; y < 10; y++) {
     int x = 0;
     while(x < level.getLength()) {
@@ -44,8 +47,10 @@ GameState::GameState(Level level)
 	float center_x = width/2.0f + x;
 	// Add a static rigid-body for each contiguous horizontal platform.
 	btCollisionShape* collision_shape = new btBox2dShape(btVector3(width/2.0f,0.5f,0.5f));
- 	btDefaultMotionState* motion_state = 
-	  new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(center_x, y+0.5f, 0)));
+
+ 	btDefaultMotionState* motion_state = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1), 
+										  btVector3(center_x, y+0.5f, 0)));
+
 	btScalar mass = 0;
 	btVector3 inertia(0,0,0);
 	collision_shape->calculateLocalInertia(mass,inertia);
@@ -62,8 +67,7 @@ GameState::GameState(Level level)
       }
     }
   }
-  //std::cerr << "Successfully initialized level physics." << std::endl;
-}
+  DEBUG_OUT("Successfully initialized level physics.\n");
 
 GameState::~GameState() {
   delete player;
