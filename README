@@ -1,0 +1,55 @@
+Build
+=====
+To create the necessary build files for your development environment, you will
+need CMake.
+
+You will also need the following development libraries downloaded and
+configured on your system:
+
+-SDL	      	Cross-platform windowing and input.
+-SDL_image	Loading of additional image formats
+-freetype2	Loading & rendering fonts
+-GLEW:		OpenGL extensions
+-Bullet3D:	Physics
+
+If you are on linux, everything above should be available from your package
+manager except for Bullet3D.  You can get to their installation files from
+
+www.bulletphysics.org
+
+Once all the necessary libraries are properly installed, from the games root
+directory execute:
+
+For Linux
+=========
+> cmake -G "Unix Makefiles"
+> make
+
+And to run:
+
+> ./pete
+
+For Windows
+===========
+From the games root directory, run:
+
+> cmake -G <visual studio version>
+
+You can get a list of the cmake build generator arguments available for your
+platform with cmake's help option:
+
+> cmake -h
+
+As an alternative to the command line tool, CMake also includes a GUI
+interface.
+
+Finally, open the generatred AllBuild Visual Studio project to build and run
+the game.
+
+Contact
+=======
+If you have made changes you would like committed or are interested in
+contributing to the project, you can contact the developer through Google
+groups at:
+
+groups.google.com/group/pete-redux-dev
