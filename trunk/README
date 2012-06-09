@@ -43,8 +43,8 @@ platform with cmake's help option:
 As an alternative to the command line tool, CMake also includes a GUI
 interface.
 
-Finally, open the generatred AllBuild Visual Studio project to build and run
-the game.
+Finally, open the generatred AllBuild Visual Studio solution to build and 
+run the game.
 
 Contact
 =======
