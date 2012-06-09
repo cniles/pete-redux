@@ -1,9 +1,8 @@
 #include <iostream>
-
 #include <BulletCollision/CollisionShapes/btBox2dShape.h>
 
 #include "gamestate.h"
-#include "objecttypes.h"
+#include "monsterfactory.h"
 
 GameState::GameState(Level level)
   : level(level), exit_toggled(false) {
@@ -24,39 +23,9 @@ GameState::GameState(Level level)
   TokenList::const_iterator token_iter = level.getTokensStart();
   while(token_iter != level.getTokensEnd()) {
     btVector3 position(token_iter->x + 0.5f, token_iter->y + 0.5f, 0.0f);
-    switch(token_iter->id) {
-    case 0:
-      DEBUG_OUT("New Zombie");
-      objects.push_back(new Zombie(this, position));
-      break;
-    case 1:
-      DEBUG_OUT("New Bat");
-      objects.push_back(new Bat(this, position));
-      break;
-    case 2:
-      DEBUG_OUT("New Soul");
-      objects.push_back(new Soul(this, position));
-      break;
-    case 3:
-      DEBUG_OUT("New DarkChampion");
-      objects.push_back(new DarkChampion(this, position));
-      break;
-    case 4:
-      DEBUG_OUT("New Soldier");
-      objects.push_back(new Soldier(this, position));
-      break;
-    case 21:
-      DEBUG_OUT("New Exit");
-      objects.push_back(new Exit(this, position));
-      break;
-    case 98:
-      DEBUG_OUT("New Medpack");
-      objects.push_back(new Medpack(this, position));
-      break;
-    case 99:
-      DEBUG_OUT("New Ammo");
-      objects.push_back(new Ammo(this, position));
-      break;
+    GameObject* new_object = MonsterFactory::createMonster(token_iter->id, position, this);
+    if(new_object) {
+      objects.push_back(new_object);
     }
     token_iter++;
   }
@@ -75,7 +44,7 @@ GameState::GameState(Level level)
 	float center_x = width/2.0f + x;
 	// Add a static rigid-body for each contiguous horizontal platform.
 	btCollisionShape* collision_shape = new btBox2dShape(btVector3(width/2.0f,0.5f,0.5f));
-	btDefaultMotionState* motion_state = 
+ 	btDefaultMotionState* motion_state = 
 	  new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(center_x, y+0.5f, 0)));
 	btScalar mass = 0;
 	btVector3 inertia(0,0,0);

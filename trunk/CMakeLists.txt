@@ -4,8 +4,7 @@ project (pete-redux)
 if(WIN32)
 	link_directories(src)
 	set (EXTRA_LIBS ${EXTRA_LIBS} BaseCode ClientCode SDL SDLmain
-	SDL_image GLU32 OpenGL32
-	BulletDynamics BulletCollision LinearMath)
+	SDL_image GLU32 OpenGL32 BulletDynamics BulletCollision LinearMath)
 elseif(UNIX)
 	include_directories("/usr/local/include/bullet" "/usr/include/freetype2")
 	set (EXTRA_LIBS ${EXTRA_LIBS} BaseCode ClientCode SDL SDL_image GLU GL
