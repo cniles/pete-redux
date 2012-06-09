@@ -6,7 +6,7 @@ if(WIN32)
 	set (EXTRA_LIBS ${EXTRA_LIBS} BaseCode ClientCode SDL SDLmain
 	SDL_image GLU32 OpenGL32 BulletDynamics BulletCollision LinearMath)
 elseif(UNIX)
-#	include_directories("/usr/local/include/bullet" "/usr/include/freetype2")
+	include_directories("/usr/local/include/bullet" "/usr/include/freetype2")
 	set (EXTRA_LIBS ${EXTRA_LIBS} BaseCode ClientCode SDL SDL_image GLU GL
 	GLEW freetype BulletDynamics BulletCollision LinearMath)
 endif()

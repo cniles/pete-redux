@@ -68,6 +68,7 @@ GameState::GameState(Level level)
     }
   }
   DEBUG_OUT("Successfully initialized level physics.\n");
+}
 
 GameState::~GameState() {
   delete player;
