@@ -12,10 +12,9 @@ configured on your system:
 -GLEW:		OpenGL extensions
 -Bullet3D:	Physics
 
-If you are on linux, everything above should be available from your package
-manager except for Bullet3D.  You can get to their installation files from
+On ubuntu, installing the following with apt-get gets it building:
 
-www.bulletphysics.org
+sudo apt-get install libfreetype6-dev libglew-dev libbullet-dev libsdl-dev libsdl-image1.2-dev
 
 Once all the necessary libraries are properly installed, from the games root
 directory execute:
