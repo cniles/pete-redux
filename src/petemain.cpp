@@ -197,8 +197,8 @@ void processCollisions(GameState* gamestate) {
   for(int i = 0; i < num_manifolds; i++) {
     btPersistentManifold* contact_manifold = gamestate->dynamics_world->getDispatcher()->getManifoldByIndexInternal(i);
 
-    btCollisionObject* object_a = static_cast<btCollisionObject*>(contact_manifold->getBody0());
-    btCollisionObject* object_b = static_cast<btCollisionObject*>(contact_manifold->getBody1());
+    btCollisionObject* object_a = const_cast<btCollisionObject*>(contact_manifold->getBody0());
+    btCollisionObject* object_b = const_cast<btCollisionObject*>(contact_manifold->getBody1());
 
     void* pointer_a = object_a->getUserPointer();
     void* pointer_b = object_b->getUserPointer();

@@ -231,7 +231,7 @@ void Player::fireShotgun() {
 	PhysicsObject* object = (PhysicsObject*)callback.m_collisionObject->getUserPointer();
 	if(object) {
 	  object->notifyWasShot(1, 0);
-	  btRigidBody* body = btRigidBody::upcast(callback.m_collisionObject);
+	  btRigidBody* body = const_cast<btRigidBody*>(btRigidBody::upcast(callback.m_collisionObject));
 	  if(body) {
 	    body->applyCentralForce(btVector3(direction*PLAYER_SHOTGUN_FORCE, 0.0f, 0.0f));
 	  }
